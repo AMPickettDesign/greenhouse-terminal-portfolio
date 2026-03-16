@@ -159,6 +159,13 @@ export default function Lobby() {
   }, [bootComplete, bootDone, skipBoot, togglePause, setBootSeen])
 
   return (
+    <>
+    {showBriefing && (
+      <Briefing onEnter={() => {
+        setBriefingSeen(true)
+        setShowBriefing(false)
+      }} />
+    )}
     <main className={styles.lobby}>
       <div className={styles.container}>
 
@@ -188,13 +195,6 @@ export default function Lobby() {
             )}
           </div>
         </section>
-
-        {showBriefing && (
-          <Briefing onEnter={() => {
-            setBriefingSeen(true)
-            setShowBriefing(false)
-          }} />
-        )}
 
         {bootDone && !showBriefing && (
           <>
@@ -261,5 +261,6 @@ export default function Lobby() {
         )}
       </div>
     </main>
+    </>
   )
 }
