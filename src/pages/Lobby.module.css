@@ -45,6 +45,20 @@
   to   { opacity: 1; transform: translateY(0); }
 }
 
+.skipPrompt {
+  margin-top: var(--gap-md);
+  font-family: var(--font-terminal);
+  font-size: 0.7rem;
+  letter-spacing: 0.15em;
+  color: var(--terminal);
+  animation: blink 1.2s step-end infinite;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
 /* Hero */
 .hero { text-align: center; }
 

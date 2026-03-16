@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import { Link } from 'react-router-dom'
 import { useSanity } from '../context/SanityContext'
 import GlitchText from '../components/effects/GlitchText'
@@ -29,7 +29,12 @@ export default function Lobby() {
   const { devMode } = useSanity()
   const [bootLines, setBootLines] = useState([])
   const [bootDone, setBootDone] = useState(false)
+  const [bootComplete, setBootComplete] = useState(false)
   const logs = getLogsForLocation('lobby')
+
+  const skipBoot = useCallback(() => {
+    if (bootComplete && !bootDone) setBootDone(true)
+  }, [bootComplete, bootDone])
 
   useEffect(() => {
     let i = 0
@@ -38,11 +43,24 @@ export default function Lobby() {
       i++
       if (i >= BOOT_LINES.length) {
         clearInterval(interval)
-        setTimeout(() => setBootDone(true), 400)
+        setBootComplete(true)
+        setTimeout(() => setBootDone(true), 2000)
       }
-    }, 200)
+    }, 800)
     return () => clearInterval(interval)
   }, [])
+
+  useEffect(() => {
+    if (!bootComplete || bootDone) return
+    const handleKey = () => skipBoot()
+    const handleClick = () => skipBoot()
+    window.addEventListener('keydown', handleKey)
+    window.addEventListener('pointerdown', handleClick)
+    return () => {
+      window.removeEventListener('keydown', handleKey)
+      window.removeEventListener('pointerdown', handleClick)
+    }
+  }, [bootComplete, bootDone, skipBoot])
 
   return (
     <main className={styles.lobby}>
@@ -63,6 +81,9 @@ export default function Lobby() {
                 {line ? `> ${line}` : ''}
               </div>
             ))}
+            {bootComplete && !bootDone && (
+              <div className={styles.skipPrompt}>PRESS ANY KEY TO CONTINUE</div>
+            )}
           </div>
         </section>
 
