@@ -37,17 +37,38 @@ export default function Lobby() {
   }, [bootComplete, bootDone])
 
   useEffect(() => {
-    let i = 0
-    const interval = setInterval(() => {
-      setBootLines(prev => [...prev, BOOT_LINES[i]])
-      i++
-      if (i >= BOOT_LINES.length) {
-        clearInterval(interval)
-        setBootComplete(true)
-        setTimeout(() => setBootDone(true), 2000)
+    let cancelled = false
+    let timeout
+
+    async function typeLines() {
+      for (let i = 0; i < BOOT_LINES.length; i++) {
+        if (cancelled) return
+        const line = BOOT_LINES[i]
+        if (!line) {
+          setBootLines(prev => [...prev, ''])
+          await new Promise(r => { timeout = setTimeout(r, 800) })
+          continue
+        }
+        setBootLines(prev => [...prev, ''])
+        for (let c = 0; c < line.length; c++) {
+          if (cancelled) return
+          setBootLines(prev => {
+            const updated = [...prev]
+            updated[updated.length - 1] = line.slice(0, c + 1)
+            return updated
+          })
+          await new Promise(r => { timeout = setTimeout(r, 60) })
+        }
+        await new Promise(r => { timeout = setTimeout(r, 800) })
       }
-    }, 800)
-    return () => clearInterval(interval)
+      if (!cancelled) {
+        setBootComplete(true)
+        timeout = setTimeout(() => { if (!cancelled) setBootDone(true) }, 2000)
+      }
+    }
+
+    typeLines()
+    return () => { cancelled = true; clearTimeout(timeout) }
   }, [])
 
   useEffect(() => {
