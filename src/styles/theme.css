@@ -1,0 +1,393 @@
+/* =====================================================
+   GREENHOLLOW RESEARCH FACILITY — DESIGN SYSTEM
+   Horror Portfolio Theme
+   ===================================================== */
+
+/* --- Google Fonts loaded in index.html ---
+   Share Tech Mono  → terminal / system text
+   VT323            → display / glitchy headers
+   Crimson Text     → body / lore copy
+*/
+
+:root {
+  /* Core palette */
+  --black:        #0a0b09;
+  --deep-green:   #0d1a0f;
+  --mid-green:    #1a2e1c;
+  --moss:         #2d4a30;
+  --sage:         #4a7c59;
+  --pale-green:   #8ab89a;
+  --terminal:     #a8d5b5;
+  --amber:        #d4821a;
+  --amber-dim:    #7a4a0e;
+  --blood:        #8b1a1a;
+  --blood-bright: #c0392b;
+  --ash:          #4a4a46;
+  --smoke:        #8a8a82;
+  --fog:          #c8c8be;
+  --white:        #e8e8e0;
+
+  /* Semantic */
+  --bg:           var(--black);
+  --bg-panel:     var(--deep-green);
+  --bg-elevated:  var(--mid-green);
+  --border:       var(--moss);
+  --border-dim:   #1e2e20;
+  --text-primary: var(--terminal);
+  --text-secondary: var(--sage);
+  --text-dim:     var(--ash);
+  --text-lore:    var(--fog);
+  --accent:       var(--amber);
+  --accent-dim:   var(--amber-dim);
+  --danger:       var(--blood);
+  --danger-bright: var(--blood-bright);
+
+  /* Typography */
+  --font-terminal: 'Share Tech Mono', 'Courier New', monospace;
+  --font-display:  'VT323', monospace;
+  --font-lore:     'Crimson Text', Georgia, serif;
+
+  /* Sanity (0–100). Set by SanityContext. Drives all distortion. */
+  --sanity: 100;
+
+  /* Derived distortion values (CSS calc from --sanity) */
+  --distort-blur:    calc((1 - var(--sanity) / 100) * 3px);
+  --distort-drift:   calc((1 - var(--sanity) / 100) * 4px);
+  --distort-opacity: calc(0.3 + (var(--sanity) / 100) * 0.7);
+  --flicker-speed:   calc(2s + (var(--sanity) / 100) * 8s);
+  --noise-opacity:   calc((1 - var(--sanity) / 100) * 0.15);
+
+  /* Spacing */
+  --gap-xs: 4px;
+  --gap-sm: 8px;
+  --gap-md: 16px;
+  --gap-lg: 24px;
+  --gap-xl: 40px;
+  --gap-2xl: 64px;
+
+  /* Transitions */
+  --trans-fast: 150ms ease;
+  --trans-med:  300ms ease;
+  --trans-slow: 600ms ease;
+}
+
+/* ======== RESET ======== */
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-size: 16px;
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: var(--bg);
+  color: var(--text-primary);
+  font-family: var(--font-terminal);
+  font-size: 14px;
+  line-height: 1.6;
+  min-height: 100vh;
+  min-height: -webkit-fill-available;
+  overflow-x: hidden;
+  cursor: default;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ======== SCANLINES EFFECT ======== */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0, 0, 0, 0.08) 2px,
+    rgba(0, 0, 0, 0.08) 4px
+  );
+  pointer-events: none;
+  z-index: 9999;
+}
+
+/* ======== NOISE OVERLAY (driven by sanity) ======== */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  opacity: var(--noise-opacity);
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='1'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 9998;
+  mix-blend-mode: overlay;
+}
+
+/* ======== TYPOGRAPHY ======== */
+h1, h2, h3 {
+  font-family: var(--font-display);
+  color: var(--text-primary);
+  letter-spacing: 0.05em;
+  line-height: 1.1;
+}
+
+h1 { font-size: clamp(2.5rem, 6vw, 5rem); }
+h2 { font-size: clamp(1.8rem, 4vw, 3rem); }
+h3 { font-size: clamp(1.2rem, 2.5vw, 2rem); }
+
+p, li {
+  font-family: var(--font-terminal);
+  color: var(--text-secondary);
+  line-height: 1.7;
+}
+
+.lore-text {
+  font-family: var(--font-lore);
+  color: var(--text-lore);
+  font-style: italic;
+  line-height: 1.8;
+}
+
+/* ======== PANELS ======== */
+.panel {
+  background: var(--bg-panel);
+  border: 1px solid var(--border);
+  padding: var(--gap-md);
+  position: relative;
+}
+
+.panel::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border: 1px solid var(--border-dim);
+  margin: 2px;
+  pointer-events: none;
+}
+
+.panel-header {
+  font-family: var(--font-terminal);
+  font-size: 0.7rem;
+  color: var(--text-dim);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: var(--gap-sm);
+  margin-bottom: var(--gap-md);
+}
+
+/* ======== BUTTONS ======== */
+.btn {
+  font-family: var(--font-terminal);
+  font-size: 0.8rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: var(--gap-sm) var(--gap-md);
+  background: transparent;
+  border: 1px solid var(--sage);
+  color: var(--terminal);
+  cursor: pointer;
+  transition: all var(--trans-fast);
+  position: relative;
+  overflow: hidden;
+}
+
+.btn::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--sage);
+  opacity: 0;
+  transition: opacity var(--trans-fast);
+}
+
+.btn:hover::before { opacity: 0.15; }
+.btn:hover { border-color: var(--terminal); color: var(--white); }
+.btn:active { transform: scale(0.98); }
+
+.btn-danger {
+  border-color: var(--danger);
+  color: var(--danger-bright);
+}
+.btn-danger:hover { border-color: var(--danger-bright); }
+
+.btn-accent {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+/* ======== STATUS INDICATORS ======== */
+.status-dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--sage);
+  animation: pulse-dot 2s infinite;
+}
+
+.status-dot.danger { background: var(--danger-bright); }
+.status-dot.warning { background: var(--amber); }
+
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.3; }
+}
+
+/* ======== LINKS ======== */
+a {
+  color: var(--terminal);
+  text-decoration: none;
+  transition: color var(--trans-fast);
+}
+a:hover { color: var(--accent); }
+
+/* ======== SCROLLBAR ======== */
+::-webkit-scrollbar { width: 6px; background: var(--deep-green); }
+::-webkit-scrollbar-thumb { background: var(--moss); }
+::-webkit-scrollbar-thumb:hover { background: var(--sage); }
+
+/* ======== UTILITY ======== */
+.sr-only {
+  position: absolute;
+  width: 1px; height: 1px;
+  padding: 0; margin: -1px;
+  overflow: hidden;
+  clip: rect(0,0,0,0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.text-dim { color: var(--text-dim); }
+.text-accent { color: var(--accent); }
+.text-danger { color: var(--danger-bright); }
+.text-terminal { color: var(--terminal); }
+.mono { font-family: var(--font-terminal); }
+
+/* ======== FLICKER ANIMATION ======== */
+@keyframes flicker {
+  0%, 95%, 100%  { opacity: 1; }
+  96%            { opacity: 0.6; }
+  97%            { opacity: 1; }
+  98%            { opacity: 0.4; }
+  99%            { opacity: 0.9; }
+}
+
+.flicker {
+  animation: flicker var(--flicker-speed) infinite;
+}
+
+/* ======== GLITCH ======== */
+@keyframes glitch-clip-1 {
+  0%   { clip-path: inset(40% 0 61% 0); transform: translateX(-4px); }
+  50%  { clip-path: inset(10% 0 85% 0); transform: translateX(4px); }
+  100% { clip-path: inset(40% 0 61% 0); transform: translateX(-4px); }
+}
+
+@keyframes glitch-clip-2 {
+  0%   { clip-path: inset(80% 0 5% 0);  transform: translateX(4px); }
+  50%  { clip-path: inset(25% 0 58% 0); transform: translateX(-4px); }
+  100% { clip-path: inset(80% 0 5% 0);  transform: translateX(4px); }
+}
+
+/* ======== PROGRESS BAR BASE ======== */
+.progress-bar {
+  width: 100%;
+  height: 6px;
+  background: var(--mid-green);
+  border: 1px solid var(--border);
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: var(--sage);
+  transition: width var(--trans-med);
+}
+
+.progress-fill.danger { background: var(--danger-bright); }
+.progress-fill.warning { background: var(--amber); }
+
+/* ======== GRID ======== */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 var(--gap-lg);
+}
+
+/* ======== ACCESSIBILITY ======== */
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* High contrast mode hook */
+.high-contrast {
+  --terminal:  #ffffff;
+  --sage:      #cccccc;
+  --text-secondary: #ffffff;
+  --bg:        #000000;
+  --bg-panel:  #111111;
+}
+
+/* =====================================================
+   BREAKPOINTS REFERENCE
+   Mobile:  max-width: 480px
+   Tablet:  max-width: 768px
+   Desktop: min-width: 769px
+   ===================================================== */
+
+/* ======== BOTTOM NAV SPACING ======== */
+:root {
+  --bottom-nav-height: 60px;
+}
+
+.has-bottom-nav {
+  padding-bottom: var(--bottom-nav-height);
+}
+
+/* ======== MOBILE PERFORMANCE GUARD ======== */
+body.reduce-effects::before {
+  display: none;
+}
+
+body.reduce-effects {
+  --noise-opacity: 0;
+}
+
+body.reduce-effects *,
+body.reduce-effects *::before,
+body.reduce-effects *::after {
+  animation-duration: 0.01ms !important;
+  transition-duration: 0.01ms !important;
+}
+
+/* ======== TOUCH TARGETS (below 769px) ======== */
+@media (max-width: 768px) {
+  button,
+  a,
+  [role="button"] {
+    min-height: 44px;
+    min-width: 44px;
+  }
+}
+
+/* ======== TYPOGRAPHY MOBILE SCALE ======== */
+@media (max-width: 480px) {
+  h1 {
+    font-size: clamp(2rem, 6vw, 3rem);
+  }
+}

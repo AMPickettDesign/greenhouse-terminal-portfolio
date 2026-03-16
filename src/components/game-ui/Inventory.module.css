@@ -1,0 +1,120 @@
+.inventory {
+  background: var(--bg-panel);
+  border: 1px solid var(--border);
+  padding: var(--gap-md);
+  font-family: var(--font-terminal);
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--gap-md);
+  padding-bottom: var(--gap-sm);
+  border-bottom: 1px solid var(--border);
+}
+
+.title {
+  font-size: 0.7rem;
+  letter-spacing: 0.15em;
+  color: var(--text-dim);
+}
+
+.count {
+  font-size: 0.65rem;
+  color: var(--ash);
+}
+
+.layout {
+  display: grid;
+  grid-template-columns: 1fr 200px;
+  gap: var(--gap-md);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 4px;
+}
+
+.slot {
+  aspect-ratio: 1;
+  background: var(--bg);
+  border: 1px solid var(--border-dim);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: default;
+  transition: border-color var(--trans-fast);
+}
+
+.slot.filled {
+  cursor: pointer;
+  border-color: var(--border);
+}
+
+.slot.filled:hover {
+  border-color: var(--sage);
+  background: var(--mid-green);
+}
+
+.slot.selectedSlot {
+  border-color: var(--terminal);
+  background: var(--mid-green);
+}
+
+.itemIcon {
+  font-size: 1.4rem;
+  line-height: 1;
+  filter: saturate(0.6);
+}
+
+.detail {
+  background: var(--bg);
+  border: 1px solid var(--border-dim);
+  padding: var(--gap-md);
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-sm);
+  min-height: 160px;
+}
+
+.detailIcon {
+  font-size: 2.5rem;
+  text-align: center;
+  filter: saturate(0.5);
+}
+
+.detailName {
+  font-size: 0.75rem;
+  letter-spacing: 0.1em;
+  color: var(--terminal);
+  text-align: center;
+}
+
+.detailDesc {
+  font-family: var(--font-lore);
+  font-size: 0.85rem;
+  color: var(--text-lore);
+  line-height: 1.6;
+  flex: 1;
+}
+
+.detailEmpty {
+  font-size: 0.7rem;
+  color: var(--ash);
+  text-align: center;
+  margin-top: auto;
+  margin-bottom: auto;
+}
+
+@media (max-width: 768px) {
+  .slot {
+    min-width: 44px;
+    min-height: 44px;
+  }
+}
+
+@media (max-width: 500px) {
+  .layout { grid-template-columns: 1fr; }
+}

@@ -1,0 +1,145 @@
+.panel {
+  background: var(--bg-panel);
+  border: 1px solid var(--border);
+  font-family: var(--font-terminal);
+  overflow: hidden;
+}
+
+.header {
+  padding: var(--gap-sm) var(--gap-md);
+  border-bottom: 1px solid var(--border);
+  background: var(--bg);
+}
+
+.title {
+  display: block;
+  font-size: 0.65rem;
+  letter-spacing: 0.15em;
+  color: var(--text-dim);
+}
+
+.sub {
+  display: block;
+  font-size: 0.55rem;
+  color: var(--ash);
+  margin-top: 2px;
+  letter-spacing: 0.1em;
+}
+
+.body {
+  padding: var(--gap-md);
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-lg);
+}
+
+.setting {}
+
+.settingHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--gap-sm);
+}
+
+.settingLabel {
+  font-size: 0.7rem;
+  letter-spacing: 0.12em;
+  color: var(--terminal);
+  cursor: pointer;
+}
+
+.settingValue {
+  font-size: 0.75rem;
+  letter-spacing: 0.1em;
+  font-weight: bold;
+  transition: color 0.3s ease;
+}
+
+.slider {
+  width: 100%;
+  accent-color: var(--sage);
+  cursor: pointer;
+  margin-bottom: var(--gap-sm);
+  height: 4px;
+}
+
+.settingDesc {
+  font-family: var(--font-lore);
+  font-size: 0.82rem;
+  color: var(--text-dim);
+  line-height: 1.7;
+  font-style: italic;
+}
+
+/* Toggle switch */
+.toggle {
+  position: relative;
+  width: 40px;
+  height: 20px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 0;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: border-color var(--trans-fast);
+}
+
+.toggle.toggleOn {
+  border-color: var(--sage);
+  background: var(--mid-green);
+}
+
+.toggleThumb {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 12px;
+  height: 12px;
+  background: var(--ash);
+  transition: transform var(--trans-fast), background var(--trans-fast);
+}
+
+.toggleOn .toggleThumb {
+  transform: translateX(20px);
+  background: var(--sage);
+}
+
+.note {
+  display: flex;
+  gap: var(--gap-sm);
+  align-items: flex-start;
+  padding: var(--gap-sm) var(--gap-md);
+  background: var(--bg);
+  border: 1px solid var(--border-dim);
+  font-size: 0.65rem;
+  color: var(--ash);
+  letter-spacing: 0.05em;
+  line-height: 1.6;
+}
+
+.noteIcon {
+  flex-shrink: 0;
+  color: var(--sage);
+}
+
+/* Mobile: max-width: 768px */
+@media (max-width: 768px) {
+  .toggle {
+    min-width: 44px;
+    min-height: 44px;
+  }
+
+  .toggleThumb {
+    top: 50%;
+    transform: translateY(-50%);
+  }
+
+  .toggleOn .toggleThumb {
+    transform: translateX(20px) translateY(-50%);
+  }
+
+  .slider {
+    width: 100%;
+  }
+}

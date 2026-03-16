@@ -1,0 +1,13 @@
+/* Appended via Equipment.jsx className override — see PageShared.module.css for base */
+.equipGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: var(--gap-md);
+}
+
+/* Mobile: max-width: 480px */
+@media (max-width: 480px) {
+  .equipGrid {
+    grid-template-columns: 1fr;
+  }
+}

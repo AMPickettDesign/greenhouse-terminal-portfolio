@@ -1,0 +1,132 @@
+.hud {
+  background: var(--bg-panel);
+  border: 1px solid var(--border);
+  padding: var(--gap-md);
+  min-width: 240px;
+  font-family: var(--font-terminal);
+  position: relative;
+}
+
+.hud::before {
+  content: '';
+  position: absolute;
+  inset: 2px;
+  border: 1px solid var(--border-dim);
+  pointer-events: none;
+}
+
+.hud[data-tier="critical"] {
+  border-color: var(--danger);
+  animation: border-pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes border-pulse {
+  0%, 100% { border-color: var(--danger); }
+  50%       { border-color: var(--blood); }
+}
+
+.hudHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--gap-md);
+  padding-bottom: var(--gap-sm);
+  border-bottom: 1px solid var(--border);
+}
+
+.label {
+  font-size: 0.65rem;
+  letter-spacing: 0.15em;
+  color: var(--text-dim);
+}
+
+.tier {
+  font-size: 0.65rem;
+  letter-spacing: 0.15em;
+}
+
+.stat {
+  margin-bottom: var(--gap-md);
+}
+
+.statLabel {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.7rem;
+  letter-spacing: 0.1em;
+  margin-bottom: 4px;
+  color: var(--text-secondary);
+}
+
+.bar {
+  height: 6px;
+  background: var(--mid-green);
+  border: 1px solid var(--border-dim);
+  overflow: hidden;
+}
+
+.fill {
+  height: 100%;
+  transition: width 0.3s ease, background 0.3s ease;
+}
+
+.unreliable {
+  display: block;
+  font-size: 0.55rem;
+  color: var(--amber);
+  letter-spacing: 0.1em;
+  margin-top: 4px;
+  animation: flicker 0.8s infinite;
+}
+
+.controls {
+  margin-top: var(--gap-md);
+  padding-top: var(--gap-md);
+  border-top: 1px solid var(--border-dim);
+}
+
+.controlGroup {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-sm);
+}
+
+.controlLabel {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 0.65rem;
+  letter-spacing: 0.08em;
+  color: var(--text-dim);
+}
+
+.controlLabel input[type="range"] {
+  width: 100%;
+  accent-color: var(--sage);
+  cursor: pointer;
+}
+
+@keyframes flicker {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.3; }
+}
+
+/* Mobile: max-width: 768px */
+@media (max-width: 768px) {
+  .controlLabel input[type="range"] {
+    padding: 10px 0;
+    min-height: 44px;
+  }
+
+  .statLabel {
+    font-size: 0.8rem;
+  }
+
+  .label {
+    font-size: 0.8rem;
+  }
+
+  .controlLabel {
+    font-size: 0.8rem;
+  }
+}

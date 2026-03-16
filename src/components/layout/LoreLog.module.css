@@ -1,0 +1,75 @@
+.logWrapper {
+  border: 1px solid var(--border-dim);
+  margin-bottom: var(--gap-sm);
+  background: var(--bg);
+  transition: border-color var(--trans-med);
+}
+
+.logWrapper[data-tier="corrupted"] {
+  border-color: var(--danger);
+}
+
+.logToggle {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: var(--gap-sm);
+  padding: var(--gap-sm) var(--gap-md);
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  font-family: var(--font-terminal);
+  font-size: 0.7rem;
+  letter-spacing: 0.1em;
+  color: var(--text-dim);
+  transition: color var(--trans-fast);
+}
+
+.logToggle:hover { color: var(--terminal); }
+
+.logIcon { flex-shrink: 0; font-size: 0.5rem; }
+
+.logTitle { flex: 1; }
+
+.logDate {
+  font-size: 0.6rem;
+  color: var(--ash);
+  flex-shrink: 0;
+}
+
+.logContent {
+  padding: var(--gap-sm) var(--gap-md) var(--gap-md);
+  border-top: 1px solid var(--border-dim);
+}
+
+.logMeta {
+  display: flex;
+  gap: var(--gap-lg);
+  font-size: 0.6rem;
+  letter-spacing: 0.1em;
+  color: var(--ash);
+  margin-bottom: var(--gap-sm);
+}
+
+.logText {
+  font-family: var(--font-lore);
+  color: var(--text-lore);
+  font-size: 0.9rem;
+  line-height: 1.8;
+}
+
+/* Mobile: max-width: 768px */
+@media (max-width: 768px) {
+  .logToggle {
+    min-height: 44px;
+  }
+
+  .logContent {
+    padding: var(--gap-lg);
+  }
+
+  .logText {
+    font-size: 1rem;
+  }
+}

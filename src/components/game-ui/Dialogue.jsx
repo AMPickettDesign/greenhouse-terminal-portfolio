@@ -1,0 +1,158 @@
+import { useState, useEffect } from 'react'
+import { useSanity } from '../../context/SanityContext'
+import styles from './Dialogue.module.css'
+
+const CONVERSATIONS = [
+  {
+    id: 'guard',
+    speaker: 'SECURITY OFFICER DALE',
+    lines: [
+      {
+        text: "You're not supposed to be in this section. I'm going to need to see your clearance badge.",
+        choices: [
+          { label: "Show badge", next: 'badge_shown' },
+          { label: "I work here", next: 'claim_staff' },
+          { label: "Run", next: 'flee' },
+        ],
+      },
+    ],
+    badge_shown: {
+      text: "This... this doesn't look right. The photo doesn't match. Who are you really?",
+      choices: [
+        { label: "Stay calm", next: null },
+        { label: "Look away", next: null },
+      ],
+    },
+    claim_staff: {
+      text: "You work here. Right. Then you've seen what's in Sector B. Then you already know.",
+      choices: [
+        { label: "What do you mean?", next: null },
+        { label: "...", next: null },
+      ],
+    },
+    flee: {
+      text: null, // end
+      choices: [],
+    },
+  },
+]
+
+// Corrupt a string — drop characters, insert noise
+function corruptText(text, intensity) {
+  if (intensity <= 0) return text
+  const glyphs = '░▒▓█▄▀■□▪▫!?@#'
+  return text.split('').map(char => {
+    if (char === ' ') return char
+    if (Math.random() < intensity * 0.2) return glyphs[Math.floor(Math.random() * glyphs.length)]
+    if (Math.random() < intensity * 0.1) return ''
+    return char
+  }).join('')
+}
+
+export default function Dialogue({ interactive = false }) {
+  const { sanity } = useSanity()
+  const [conv] = useState(CONVERSATIONS[0])
+  const [nodeKey, setNodeKey] = useState(null) // null = opening line
+  const [displayedText, setDisplayedText] = useState('')
+  const [typing, setTyping] = useState(false)
+  const [done, setDone] = useState(false)
+
+  const corruption = sanity < 70 ? (70 - sanity) / 70 : 0
+
+  const currentNode = nodeKey ? conv[nodeKey] : conv.lines[0]
+  const rawText = currentNode?.text ?? ''
+
+  // Typewriter effect
+  useEffect(() => {
+    if (!rawText) { setDone(true); return }
+    setTyping(true)
+    setDisplayedText('')
+    setDone(false)
+    let i = 0
+    const speed = Math.max(20, 60 - (100 - sanity) * 0.4)
+    const interval = setInterval(() => {
+      i++
+      const slice = rawText.slice(0, i)
+      setDisplayedText(corruptText(slice, corruption))
+      if (i >= rawText.length) {
+        clearInterval(interval)
+        setTyping(false)
+        setDone(true)
+      }
+    }, speed)
+    return () => clearInterval(interval)
+  }, [rawText, sanity])
+
+  const handleChoice = (choice) => {
+    if (choice.next === null) {
+      setDone(true)
+      setDisplayedText('...')
+      return
+    }
+    setNodeKey(choice.next)
+  }
+
+  const handleReset = () => {
+    setNodeKey(null)
+    setDone(false)
+  }
+
+  const choices = currentNode?.choices ?? []
+
+  // At low sanity, shuffle or corrupt choice labels
+  const displayChoices = choices.map(c => ({
+    ...c,
+    label: corruption > 0.5
+      ? corruptText(c.label, corruption * 0.4)
+      : c.label,
+  }))
+
+  return (
+    <div className={styles.dialogue} data-corruption={corruption > 0.5 ? 'high' : 'low'}>
+      <div className={styles.header}>
+        <span className={styles.speakerTag}>
+          {corruption > 0.6
+            ? corruptText(conv.speaker, 0.3)
+            : conv.speaker}
+        </span>
+        <span className={styles.statusTag}>
+          {sanity < 30 ? '⚠ UNRELIABLE' : 'LIVE'}
+        </span>
+      </div>
+
+      <div className={styles.textBox} role="region" aria-live="polite" aria-label="Dialogue">
+        {rawText ? (
+          <p className={styles.dialogueText}>{displayedText}{typing && <span className={styles.cursor} aria-hidden="true">▋</span>}</p>
+        ) : (
+          <p className={styles.dialogueText} style={{ color: 'var(--ash)' }}>
+            {done ? '[END OF TRANSMISSION]' : ''}
+          </p>
+        )}
+      </div>
+
+      {done && displayChoices.length > 0 && (
+        <div className={styles.choices} role="group" aria-label="Response options">
+          {displayChoices.map((choice, i) => (
+            <button
+              key={i}
+              className={styles.choice}
+              onClick={() => handleChoice(choice)}
+              style={{
+                transform: corruption > 0.7 ? `translateX(${(Math.random() - 0.5) * 6}px)` : 'none',
+              }}
+            >
+              <span className={styles.choiceIndex} aria-hidden="true">{i + 1}.</span>
+              {choice.label}
+            </button>
+          ))}
+        </div>
+      )}
+
+      {interactive && (nodeKey !== null || done) && (
+        <button className={`btn ${styles.resetBtn}`} onClick={handleReset}>
+          ↺ RESET DIALOGUE
+        </button>
+      )}
+    </div>
+  )
+}
