@@ -45,6 +45,15 @@
   to   { opacity: 1; transform: translateY(0); }
 }
 
+.pausedIndicator {
+  margin-top: var(--gap-sm);
+  font-family: var(--font-terminal);
+  font-size: 0.65rem;
+  letter-spacing: 0.15em;
+  color: var(--text-dim);
+  animation: blink 1.2s step-end infinite;
+}
+
 .skipPrompt {
   margin-top: var(--gap-md);
   font-family: var(--font-terminal);

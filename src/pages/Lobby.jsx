@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from 'react'
+import { useEffect, useState, useCallback, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import { useSanity } from '../context/SanityContext'
 import GlitchText from '../components/effects/GlitchText'
@@ -30,15 +30,38 @@ export default function Lobby() {
   const [bootLines, setBootLines] = useState([])
   const [bootDone, setBootDone] = useState(false)
   const [bootComplete, setBootComplete] = useState(false)
+  const [paused, setPaused] = useState(false)
+  const pausedRef = useRef(false)
   const logs = getLogsForLocation('lobby')
 
   const skipBoot = useCallback(() => {
     if (bootComplete && !bootDone) setBootDone(true)
   }, [bootComplete, bootDone])
 
+  const togglePause = useCallback(() => {
+    setPaused(prev => {
+      pausedRef.current = !prev
+      return !prev
+    })
+  }, [])
+
   useEffect(() => {
     let cancelled = false
     let timeout
+
+    function wait(ms) {
+      return new Promise(resolve => {
+        function tick() {
+          if (cancelled) return resolve()
+          if (pausedRef.current) { timeout = setTimeout(tick, 50); return }
+          if (ms <= 0) return resolve()
+          const chunk = Math.min(ms, 50)
+          ms -= chunk
+          timeout = setTimeout(tick, chunk)
+        }
+        tick()
+      })
+    }
 
     async function typeLines() {
       for (let i = 0; i < BOOT_LINES.length; i++) {
@@ -46,20 +69,21 @@ export default function Lobby() {
         const line = BOOT_LINES[i]
         if (!line) {
           setBootLines(prev => [...prev, ''])
-          await new Promise(r => { timeout = setTimeout(r, 800) })
+          await wait(800)
           continue
         }
         setBootLines(prev => [...prev, ''])
         for (let c = 0; c < line.length; c++) {
+          if (cancelled) return
+          await wait(60)
           if (cancelled) return
           setBootLines(prev => {
             const updated = [...prev]
             updated[updated.length - 1] = line.slice(0, c + 1)
             return updated
           })
-          await new Promise(r => { timeout = setTimeout(r, 60) })
         }
-        await new Promise(r => { timeout = setTimeout(r, 800) })
+        await wait(800)
       }
       if (!cancelled) {
         setBootComplete(true)
@@ -72,15 +96,20 @@ export default function Lobby() {
   }, [])
 
   useEffect(() => {
+    if (bootDone) return
+    const handleClick = () => {
+      if (bootComplete) { skipBoot(); return }
+      togglePause()
+    }
+    window.addEventListener('pointerdown', handleClick)
+    return () => window.removeEventListener('pointerdown', handleClick)
+  }, [bootComplete, bootDone, skipBoot, togglePause])
+
+  useEffect(() => {
     if (!bootComplete || bootDone) return
     const handleKey = () => skipBoot()
-    const handleClick = () => skipBoot()
     window.addEventListener('keydown', handleKey)
-    window.addEventListener('pointerdown', handleClick)
-    return () => {
-      window.removeEventListener('keydown', handleKey)
-      window.removeEventListener('pointerdown', handleClick)
-    }
+    return () => window.removeEventListener('keydown', handleKey)
   }, [bootComplete, bootDone, skipBoot])
 
   return (
@@ -102,6 +131,9 @@ export default function Lobby() {
                 {line ? `> ${line}` : ''}
               </div>
             ))}
+            {paused && !bootComplete && (
+              <div className={styles.pausedIndicator}>PAUSED</div>
+            )}
             {bootComplete && !bootDone && (
               <div className={styles.skipPrompt}>PRESS ANY KEY TO CONTINUE</div>
             )}
