@@ -7,14 +7,14 @@ import styles from './LoreLog.module.css'
  * LoreLog
  * Renders a single lore log as a collapsed panel the user can expand.
  * Optional — never hides portfolio information, purely atmospheric.
- * When the pen is equipped, hovering over blacked-out text reveals it.
+ * When the eraser is equipped, blacked-out text is automatically revealed.
  */
 export default function LoreLog({ log }) {
   const [open, setOpen] = useState(false)
   const { sanity, equippedTool } = useSanity()
 
-  const penEquipped = equippedTool === 'pen'
-  const corrupted = !penEquipped && sanity < 40
+  const eraserEquipped = equippedTool === 'eraser'
+  const corrupted = !eraserEquipped && sanity < 40
 
   const titleText = corrupted
     ? log.title.replace(/[AEIOU]/g, '█')

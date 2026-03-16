@@ -4,8 +4,8 @@ import styles from './RedactedText.module.css'
 /**
  * RedactedText
  * Takes a redacted string (containing █ blocks) and a revealed string.
- * When the pen is equipped, hovering over a redacted segment reveals the
- * corresponding clean text from the revealed version.
+ * When the eraser is equipped, redacted blocks are automatically replaced
+ * with the clean revealed text.
  *
  * Props:
  *   redacted  — the text with █ characters
@@ -15,47 +15,67 @@ import styles from './RedactedText.module.css'
  */
 export default function RedactedText({ redacted, revealed, tag: Tag = 'span', className = '' }) {
   const { equippedTool } = useSanity()
-  const penEquipped = equippedTool === 'pen'
+  const eraserEquipped = equippedTool === 'eraser'
 
-  // If no revealed version or no redacted blocks, just render as-is
-  if (!revealed || !redacted.includes('█')) {
+  // If no redacted blocks exist, render as-is
+  if (!redacted.includes('█')) {
     return <Tag className={className}>{redacted}</Tag>
   }
 
-  // If pen is not equipped, render the redacted text flat
-  if (!penEquipped) {
-    return <Tag className={className}>{redacted}</Tag>
+  // Eraser equipped — show the clean revealed text
+  if (eraserEquipped && revealed) {
+    return (
+      <Tag className={className}>
+        {renderWithHighlights(redacted, revealed)}
+      </Tag>
+    )
   }
 
-  // Split redacted text into segments: normal text vs █ blocks
-  // Match runs of █ or runs of non-█
+  // Eraser not equipped — render redacted text with styled blocks
+  return (
+    <Tag className={className}>
+      {renderRedacted(redacted)}
+    </Tag>
+  )
+}
+
+/**
+ * Render redacted text with █ blocks styled as solid bars
+ */
+function renderRedacted(text) {
+  const segments = text.match(/█+|[^█]+/g) || [text]
+  return segments.map((segment, i) => {
+    if (/^█+$/.test(segment)) {
+      return (
+        <span key={i} className={styles.blockedText} aria-hidden="true">{segment}</span>
+      )
+    }
+    return <span key={i}>{segment}</span>
+  })
+}
+
+/**
+ * When eraser is equipped, show revealed text with the previously-redacted
+ * parts highlighted so the user can see what was uncovered.
+ */
+function renderWithHighlights(redacted, revealed) {
   const segments = redacted.match(/█+|[^█]+/g) || [redacted]
-
-  // Walk through the redacted string to find what each █ block maps to
-  // in the revealed string by character position
   let pos = 0
-  const parts = segments.map((segment, i) => {
+
+  return segments.map((segment, i) => {
     const start = pos
     pos += segment.length
     const end = pos
 
     if (/^█+$/.test(segment)) {
-      // This is a redacted block — pull the revealed text from the same position
-      const revealedSlice = revealed.slice(start, end)
-      // The revealed slice might be longer/shorter if the texts don't align perfectly
-      // Use the revealed slice if available, otherwise just show the block
-      const cleanText = revealedSlice || segment
-
+      const cleanText = revealed.slice(start, end) || segment
       return (
-        <span key={i} className={styles.redactedBlock} aria-label={cleanText}>
-          <span className={styles.blockedText} aria-hidden="true">{segment}</span>
-          <span className={styles.revealedText}>{cleanText}</span>
+        <span key={i} className={styles.revealedText} aria-label={cleanText}>
+          {cleanText}
         </span>
       )
     }
 
-    return <span key={i}>{segment}</span>
+    return <span key={i}>{revealed.slice(start, end) || segment}</span>
   })
-
-  return <Tag className={className}>{parts}</Tag>
 }

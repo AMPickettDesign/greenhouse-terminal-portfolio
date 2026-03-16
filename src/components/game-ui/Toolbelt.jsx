@@ -4,11 +4,11 @@ import styles from './Toolbelt.module.css'
 
 const TOOLS = [
   {
-    id: 'pen',
-    name: 'PERMANENT FIX PEN',
-    icon: '✒',
-    shortDesc: 'Reveals hidden and corrupted text.',
-    fullDesc: 'Permanent Fix for Permanent Problems. Equip this pen to uncover all blacked-out, redacted, and corrupted information across the facility. Hold over corrupted text to reveal what was hidden.',
+    id: 'eraser',
+    name: 'PERMANENT MISTAKE ERASER',
+    icon: '◭',
+    shortDesc: 'Clears all redacted and corrupted text.',
+    fullDesc: 'Every redaction is just a mistake someone tried to hide. Equip this eraser to wipe away all blacked-out, corrupted, and censored information across the facility. Some things were never meant to stay buried.',
     unlocked: true,
   },
   { id: null, name: 'LOCKED', icon: '?', shortDesc: 'Not yet discovered.', fullDesc: 'This tool has not been recovered from the facility.', unlocked: false },
