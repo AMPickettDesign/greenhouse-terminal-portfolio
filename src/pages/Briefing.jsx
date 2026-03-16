@@ -12,7 +12,7 @@ export default function Briefing({ onEnter }) {
   }
 
   return (
-    <div className={styles.overlay}>
+    <div className={styles.overlay} onClick={e => e.stopPropagation()} onPointerDown={e => e.stopPropagation()}>
       <div className={styles.scanlines} aria-hidden="true" />
       <div className={styles.content}>
 

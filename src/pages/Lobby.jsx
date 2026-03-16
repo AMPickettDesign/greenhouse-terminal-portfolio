@@ -49,10 +49,11 @@ export default function Lobby() {
     }
   }, [bootSeen, bootDone])
 
-  // Show briefing after boot completes on first visit
+  // Show briefing after boot completes on first visit (slight delay to avoid click-through)
   useEffect(() => {
     if (bootDone && !briefingSeen) {
-      setShowBriefing(true)
+      const id = setTimeout(() => setShowBriefing(true), 100)
+      return () => clearTimeout(id)
     }
   }, [bootDone, briefingSeen])
 
@@ -97,13 +98,13 @@ export default function Lobby() {
         const line = BOOT_LINES[i]
         if (!line) {
           setBootLines(prev => [...prev, ''])
-          await wait(800)
+          await wait(400)
           continue
         }
         setBootLines(prev => [...prev, ''])
         for (let c = 0; c < line.length; c++) {
           if (cancelled) return
-          await wait(60)
+          await wait(30)
           if (cancelled) return
           setBootLines(prev => {
             const updated = [...prev]
@@ -111,7 +112,7 @@ export default function Lobby() {
             return updated
           })
         }
-        await wait(800)
+        await wait(400)
       }
       if (!cancelled) {
         setBootComplete(true)
@@ -120,7 +121,7 @@ export default function Lobby() {
             setBootDone(true)
             setBootSeen(true)
           }
-        }, 2000)
+        }, 1200)
       }
     }
 
