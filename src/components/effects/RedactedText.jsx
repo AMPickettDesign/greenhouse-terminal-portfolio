@@ -9,10 +9,11 @@ import styles from './RedactedText.module.css'
  *   segments — array of strings and { blocked, revealed } objects (per-block reveal)
  *   redacted + revealed — plain strings (fallback: full-text swap)
  *
- * Interaction:
+ * Interaction (only when eraser is equipped):
  *   Hover a block  → temporary reveal (0.7 opacity)
  *   Click a block  → permanent reveal (full opacity, persists)
- *   Eraser tool    → all blocks permanently revealed at once
+ *   Eraser equipped → hover + click both work
+ *   Eraser not equipped → redactions are completely static
  *   Mobile: tap 1  → temp reveal, tap 2 → permanent
  */
 export default function RedactedText({
@@ -34,37 +35,44 @@ export default function RedactedText({
   const [hoveredIndex, setHoveredIndex] = useState(null)
   const [tappedIndex, setTappedIndex] = useState(null)
 
-  // Eraser: permanently reveal all blocks
+  // Clear hover/tap state when eraser is unequipped
   useEffect(() => {
-    if (eraserEquipped && blockCount > 0) {
-      setRevealedSet(prev => {
-        const next = new Set(prev)
-        for (let i = 0; i < blockCount; i++) next.add(i)
-        return next
-      })
+    if (!eraserEquipped) {
+      setHoveredIndex(null)
+      setTappedIndex(null)
     }
-  }, [eraserEquipped, blockCount])
+  }, [eraserEquipped])
 
   const handleClick = useCallback((blockIdx) => {
+    if (!eraserEquipped) return
     setRevealedSet(prev => {
       const next = new Set(prev)
       next.add(blockIdx)
       return next
     })
     setTappedIndex(null)
+  }, [eraserEquipped])
+
+  const handleHoverEnter = useCallback((blockIdx) => {
+    if (!eraserEquipped) return
+    setHoveredIndex(blockIdx)
+  }, [eraserEquipped])
+
+  const handleHoverLeave = useCallback(() => {
+    setHoveredIndex(null)
+    setTappedIndex(null)
   }, [])
 
   const handleTouchEnd = useCallback((blockIdx, e) => {
+    if (!eraserEquipped) return
     e.preventDefault()
     if (tappedIndex === blockIdx) {
-      // Second tap — permanent reveal
       handleClick(blockIdx)
     } else {
-      // First tap — temporary reveal
       setTappedIndex(blockIdx)
       setHoveredIndex(blockIdx)
     }
-  }, [tappedIndex, handleClick])
+  }, [tappedIndex, handleClick, eraserEquipped])
 
   // ── Segments mode (per-block reveal) ──────────────────────────
   if (segments) {
@@ -95,8 +103,8 @@ export default function RedactedText({
               <span
                 key={i}
                 className={styles.revealedTextTemp}
-                onMouseEnter={() => setHoveredIndex(idx)}
-                onMouseLeave={() => { setHoveredIndex(null); setTappedIndex(null) }}
+                onMouseEnter={() => handleHoverEnter(idx)}
+                onMouseLeave={handleHoverLeave}
                 onClick={() => handleClick(idx)}
                 onTouchEnd={(e) => handleTouchEnd(idx, e)}
               >
@@ -105,18 +113,27 @@ export default function RedactedText({
             )
           }
 
+          // Eraser not equipped — static block, no interaction
+          if (!eraserEquipped) {
+            return (
+              <span key={i} className={styles.blockedText} aria-hidden="true">
+                {seg.blocked}
+              </span>
+            )
+          }
+
+          // Eraser equipped — interactive block
           return (
             <span
               key={i}
               className={styles.blockedText}
-              aria-hidden="true"
-              onMouseEnter={() => setHoveredIndex(idx)}
-              onMouseLeave={() => { setHoveredIndex(null); setTappedIndex(null) }}
+              onMouseEnter={() => handleHoverEnter(idx)}
+              onMouseLeave={handleHoverLeave}
               onClick={() => handleClick(idx)}
               onTouchEnd={(e) => handleTouchEnd(idx, e)}
               role="button"
               tabIndex={0}
-              aria-label="Redacted text — click to reveal"
+              aria-label="Redacted text — equip eraser and click to reveal"
               onKeyDown={(e) => e.key === 'Enter' && handleClick(idx)}
             >
               {seg.blocked}
