@@ -7,14 +7,13 @@ import styles from './RedactedText.module.css'
  *
  * Accepts either:
  *   segments — array of strings and { blocked, revealed } objects (per-block reveal)
- *   redacted + revealed — plain strings (fallback: full-text swap)
+ *   redacted + revealed — plain strings (fallback: static bars only)
  *
  * Interaction (only when eraser is equipped):
- *   Hover a block  → temporary reveal (0.7 opacity)
- *   Click a block  → permanent reveal (full opacity, persists)
- *   Eraser equipped → hover + click both work
+ *   Hover ANY block → all blocks in this instance temporarily reveal (0.7 opacity)
+ *   Click ANY block → all blocks in this instance permanently reveal
  *   Eraser not equipped → redactions are completely static
- *   Mobile: tap 1  → temp reveal, tap 2 → permanent
+ *   Mobile: tap 1 → temp reveal all, tap 2 → permanent reveal all
  */
 export default function RedactedText({
   segments,
@@ -26,70 +25,59 @@ export default function RedactedText({
   const { equippedTool } = useSanity()
   const eraserEquipped = equippedTool === 'eraser'
 
-  // Count how many blocks exist in segments
-  const blockCount = segments
-    ? segments.filter(s => typeof s === 'object').length
-    : 0
-
-  const [revealedSet, setRevealedSet] = useState(() => new Set())
-  const [hoveredIndex, setHoveredIndex] = useState(null)
-  const [tappedIndex, setTappedIndex] = useState(null)
+  const [isPermanent, setIsPermanent] = useState(false)
+  const [isHovered, setIsHovered] = useState(false)
+  const [tapped, setTapped] = useState(false)
 
   // Clear hover/tap state when eraser is unequipped
   useEffect(() => {
     if (!eraserEquipped) {
-      setHoveredIndex(null)
-      setTappedIndex(null)
+      setIsHovered(false)
+      setTapped(false)
     }
   }, [eraserEquipped])
 
-  const handleClick = useCallback((blockIdx) => {
-    if (!eraserEquipped) return
-    setRevealedSet(prev => {
-      const next = new Set(prev)
-      next.add(blockIdx)
-      return next
-    })
-    setTappedIndex(null)
-  }, [eraserEquipped])
+  const handleBlockEnter = useCallback(() => {
+    if (!eraserEquipped || isPermanent) return
+    setIsHovered(true)
+  }, [eraserEquipped, isPermanent])
 
-  const handleHoverEnter = useCallback((blockIdx) => {
-    if (!eraserEquipped) return
-    setHoveredIndex(blockIdx)
-  }, [eraserEquipped])
-
-  const handleHoverLeave = useCallback(() => {
-    setHoveredIndex(null)
-    setTappedIndex(null)
+  const handleWrapperLeave = useCallback(() => {
+    setIsHovered(false)
+    setTapped(false)
   }, [])
 
-  const handleTouchEnd = useCallback((blockIdx, e) => {
+  const handleBlockClick = useCallback(() => {
+    if (!eraserEquipped) return
+    setIsPermanent(true)
+    setIsHovered(false)
+    setTapped(false)
+  }, [eraserEquipped])
+
+  const handleTouchEnd = useCallback((e) => {
     if (!eraserEquipped) return
     e.preventDefault()
-    if (tappedIndex === blockIdx) {
-      handleClick(blockIdx)
+    if (tapped) {
+      handleBlockClick()
     } else {
-      setTappedIndex(blockIdx)
-      setHoveredIndex(blockIdx)
+      setTapped(true)
+      setIsHovered(true)
     }
-  }, [tappedIndex, handleClick, eraserEquipped])
+  }, [tapped, handleBlockClick, eraserEquipped])
 
-  // ── Segments mode (per-block reveal) ──────────────────────────
+  // ── Segments mode (whole-phrase reveal) ────────────────────────
   if (segments) {
-    let blockIdx = -1
-
     return (
-      <Tag className={className}>
+      <Tag
+        className={className}
+        onMouseLeave={eraserEquipped && !isPermanent ? handleWrapperLeave : undefined}
+      >
         {segments.map((seg, i) => {
           if (typeof seg === 'string') {
             return <span key={i}>{seg}</span>
           }
 
-          blockIdx++
-          const idx = blockIdx
-          const isPermanent = revealedSet.has(idx)
-          const isHovered = hoveredIndex === idx && !isPermanent
-
+          // Permanently revealed
           if (isPermanent) {
             return (
               <span key={i} className={styles.revealedText}>
@@ -107,34 +95,33 @@ export default function RedactedText({
             )
           }
 
+          // Hovered (temp reveal for whole phrase)
           if (isHovered) {
             return (
               <span
                 key={i}
                 className={styles.revealedTextTemp}
-                onMouseEnter={() => handleHoverEnter(idx)}
-                onMouseLeave={handleHoverLeave}
-                onClick={() => handleClick(idx)}
-                onTouchEnd={(e) => handleTouchEnd(idx, e)}
+                onMouseEnter={handleBlockEnter}
+                onClick={handleBlockClick}
+                onTouchEnd={handleTouchEnd}
               >
                 {seg.revealed}
               </span>
             )
           }
 
-          // Eraser equipped — interactive block
+          // Eraser equipped, not hovered — interactive blocked span
           return (
             <span
               key={i}
               className={styles.blockedText}
-              onMouseEnter={() => handleHoverEnter(idx)}
-              onMouseLeave={handleHoverLeave}
-              onClick={() => handleClick(idx)}
-              onTouchEnd={(e) => handleTouchEnd(idx, e)}
+              onMouseEnter={handleBlockEnter}
+              onClick={handleBlockClick}
+              onTouchEnd={handleTouchEnd}
               role="button"
               tabIndex={0}
-              aria-label="Redacted text — equip eraser and click to reveal"
-              onKeyDown={(e) => e.key === 'Enter' && handleClick(idx)}
+              aria-label="Redacted text — equip eraser and hover or click to reveal"
+              onKeyDown={(e) => e.key === 'Enter' && handleBlockClick()}
             >
               {seg.blocked}
             </span>
@@ -144,7 +131,7 @@ export default function RedactedText({
     )
   }
 
-  // ── Fallback: plain string mode (full-text swap) ──────────────
+  // ── Fallback: plain string mode (static bars only) ────────────
   const hasRedactions = redacted && redacted.includes('█')
 
   if (!hasRedactions) {
