@@ -72,11 +72,11 @@ const STATUS_COLORS = {
 
 export default function ExperimentLogs() {
   const { devMode } = useSanity()
-  const [openFolder, setOpenFolder] = useState(null)
+  const [openBox, setOpenBox] = useState(null)
   const logs = getLogsForLocation('experiment-logs')
 
-  const toggleFolder = (id) => {
-    setOpenFolder(prev => prev === id ? null : id)
+  const toggleBox = (id) => {
+    setOpenBox(prev => prev === id ? null : id)
   }
 
   return (
@@ -88,63 +88,88 @@ export default function ExperimentLogs() {
           <h1 className={pageStyles.pageTitle}>Case Studies</h1>
         </header>
 
-        {/* Filing cabinet drawer */}
-        <div className={styles.drawer}>
-          <div className={styles.drawerLabel}>
-            <span>FILE DRAWER — EXPERIMENT RECORDS</span>
-            <span className={styles.drawerHandle} aria-hidden="true" />
+        {/* Archive storage */}
+        <div className={styles.shelfUnit}>
+          <div className={styles.shelfLabel}>
+            <span>ARCHIVE STORAGE — EXPERIMENT RECORDS</span>
+            <span>{PROJECTS.length} FILES</span>
           </div>
 
-          <div className={styles.fileStack}>
+          <div className={styles.boxGrid}>
             {PROJECTS.map(project => (
-              <div key={project.id} className={styles.folder}>
-                {/* Folder tab */}
-                <button
+              <div key={project.id} className={styles.archiveBox}>
+                {/* The box */}
+                <div
                   className={[
-                    styles.folderTab,
-                    openFolder === project.id ? styles.tabActive : '',
+                    styles.boxBody,
+                    openBox === project.id ? styles.boxOpen : '',
                   ].join(' ')}
-                  onClick={() => toggleFolder(project.id)}
-                  aria-expanded={openFolder === project.id}
-                  aria-controls={`folder-${project.id}`}
+                  onClick={() => openBox !== project.id && toggleBox(project.id)}
+                  role="button"
+                  tabIndex={0}
+                  aria-expanded={openBox === project.id}
+                  aria-controls={`box-${project.id}`}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault()
+                      toggleBox(project.id)
+                    }
+                  }}
                 >
-                  <span className={styles.tabCode}>{project.id.toUpperCase()}</span>
-                  <span className={styles.tabTitle}>{project.title}</span>
-                  <span
-                    className={styles.tabStatus}
-                    style={{ color: STATUS_COLORS[project.status] || 'var(--ash)' }}
-                  >
-                    {project.status}
-                  </span>
-                  <span className={styles.tabArrow} aria-hidden="true">▼</span>
-                </button>
-
-                {/* Folder contents — the document inside */}
-                {openFolder === project.id && (
-                  <div
-                    className={styles.folderContents}
-                    id={`folder-${project.id}`}
-                    role="region"
-                    aria-label={`${project.title} project details`}
-                  >
-                    <div className={styles.fileSubtitle}>{project.subtitle}</div>
-                    <p className={styles.fileDesc}>{project.desc}</p>
-                    <div className={styles.fileTags}>
-                      {project.tags.map(t => (
-                        <span key={t} className={styles.fileTag}>{t}</span>
-                      ))}
+                  {/* Front label */}
+                  <div className={styles.boxLabel}>
+                    <div className={styles.boxCode}>
+                      <span>{project.id.toUpperCase()}</span>
+                      <span style={{ color: STATUS_COLORS[project.status] || 'var(--ash)' }}>
+                        {project.status}
+                      </span>
                     </div>
-                    {project.link && project.link !== '#' && (
-                      <a
-                        href={project.link}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className={styles.fileLink}
-                      >
-                        VIEW PROJECT <span className={styles.fileLinkArrow} aria-hidden="true">→</span>
-                      </a>
-                    )}
+                    <div className={styles.boxTitle}>{project.title}</div>
+                    <div className={styles.boxSubtitle}>{project.subtitle}</div>
                   </div>
+                  {/* 3D bottom shadow */}
+                  <div className={styles.boxBottom} aria-hidden="true" />
+                </div>
+
+                {/* Lid animation + open contents */}
+                {openBox === project.id && (
+                  <>
+                    <div className={styles.lidWrapper} aria-hidden="true">
+                      <div className={styles.lid} />
+                    </div>
+                    <div
+                      className={styles.boxContents}
+                      id={`box-${project.id}`}
+                      role="region"
+                      aria-label={`${project.title} project details`}
+                    >
+                      <button
+                        className={styles.closeBtn}
+                        onClick={(e) => { e.stopPropagation(); setOpenBox(null) }}
+                        aria-label="Close file"
+                      >
+                        CLOSE
+                      </button>
+                      <div className={styles.fileSubtitle}>{project.subtitle}</div>
+                      <p className={styles.fileDesc}>{project.desc}</p>
+                      <div className={styles.fileTags}>
+                        {project.tags.map(t => (
+                          <span key={t} className={styles.fileTag}>{t}</span>
+                        ))}
+                      </div>
+                      {project.link && project.link !== '#' && (
+                        <a
+                          href={project.link}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className={styles.fileLink}
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          VIEW PROJECT <span className={styles.fileLinkArrow} aria-hidden="true">→</span>
+                        </a>
+                      )}
+                    </div>
+                  </>
                 )}
               </div>
             ))}
@@ -162,11 +187,11 @@ export default function ExperimentLogs() {
           <section className={pageStyles.devPanel}>
             <div className={pageStyles.panelHeader}>[ DEVELOPER MODE ]</div>
             <p className={pageStyles.bodyText}>
-              <strong>Design decision:</strong> Projects are presented as files in a filing
-              cabinet drawer — tabs stagger diagonally like physical folder tabs. Clicking a
-              folder flips it open to reveal the project details. Only one folder is open at a
-              time, encouraging focused reading. The interaction echoes the facility's physical
-              document storage aesthetic.
+              <strong>Design decision:</strong> Projects are presented as archive storage boxes
+              on shelves — each box has a label on the front with the project code, title, and
+              status. Clicking a box opens the lid (animated) and reveals the project details
+              inside. Only one box is open at a time. The interaction mirrors the facility's
+              physical document archive aesthetic.
             </p>
           </section>
         )}

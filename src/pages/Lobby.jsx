@@ -49,13 +49,12 @@ export default function Lobby() {
     }
   }, [bootSeen, bootDone])
 
-  // Show briefing after boot completes on first visit (slight delay to avoid click-through)
+  // When boot is done — show briefing for first-timers, or go straight to main page
   useEffect(() => {
-    if (bootDone && !briefingSeen) {
-      const id = setTimeout(() => setShowBriefing(true), 100)
-      return () => clearTimeout(id)
+    if (bootDone && !briefingSeen && !showBriefing) {
+      setShowBriefing(true)
     }
-  }, [bootDone, briefingSeen])
+  }, [bootDone, briefingSeen, showBriefing])
 
   const skipBoot = useCallback(() => {
     if (bootComplete && !bootDone) {
@@ -116,12 +115,7 @@ export default function Lobby() {
       }
       if (!cancelled) {
         setBootComplete(true)
-        timeout = setTimeout(() => {
-          if (!cancelled) {
-            setBootDone(true)
-            setBootSeen(true)
-          }
-        }, 1200)
+        // Don't auto-advance — wait for user to press a key
       }
     }
 
@@ -192,7 +186,7 @@ export default function Lobby() {
               <div className={styles.pausedIndicator}>PAUSED — SPACE OR CLICK TO RESUME · ESC TO SKIP</div>
             )}
             {bootComplete && !bootDone && (
-              <div className={styles.skipPrompt}>PRESS ANY KEY TO CONTINUE</div>
+              <div className={styles.skipPrompt}>PRESS ANY KEY TO VIEW BRIEFING</div>
             )}
           </div>
         </section>
