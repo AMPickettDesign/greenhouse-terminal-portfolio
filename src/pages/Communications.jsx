@@ -5,14 +5,12 @@ import { getLogsForLocation } from '../data/loreLogs'
 import styles from './PageShared.module.css'
 import commsStyles from './Communications.module.css'
 
-// ── EDIT: Your real contact info ──────────────────────────────────────────
 const CONTACT = {
-  email:    'your@email.com',
-  github:   'https://github.com/yourusername',
-  linkedin: 'https://linkedin.com/in/yourprofile',
-  other:    '',  // optional: portfolio link, Dribbble, etc.
-}
-// ── END EDIT ZONE ──────────────────────────────────────────────────────────
+  email: 'AshleyPickett46@gmail.com',
+  github: 'https://github.com/AMPickettDesign',
+  linkedin: 'https://www.linkedin.com/in/ashley-pickett-37444394/',
+  other: '',
+};
 
 export default function Communications() {
   const { sanity, devMode } = useSanity()

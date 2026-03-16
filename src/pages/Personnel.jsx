@@ -3,33 +3,35 @@ import LoreLog from '../components/layout/LoreLog'
 import { getLogsForLocation } from '../data/loreLogs'
 import styles from './PageShared.module.css'
 
-// ── EDIT THIS SECTION WITH YOUR REAL INFO ──────────────────────────────────
 const PERSONNEL = {
-  name:       'Ashley',
-  designation:'SENIOR DESIGNER — CLASS III CLEARANCE',
-  id:         'PER-0042',
-  role:       'Designer, Artist, Developer',
-  status:     'ACTIVE',
-  summary: `Ashley is a designer-led developer with a focus on user experience,
-    interaction design, and accessible interfaces. She builds real software — not
-    just mockups. Projects span desktop applications, AI integrations, and
-    full-stack web development.`,
+  name: 'Ashley M. Pickett',
+  designation: 'GRAPHIC / UI/UX DESIGNER & CREATIVE TECHNOLOGIST',
+  id: 'PER-0042',
+  role: 'Graphic Designer, UI/UX Designer',
+  status: 'ACTIVE',
+  summary: 'Graphic Designer and UI/UX Designer with a BA in Graphic Design and a UI/UX Certificate from Eastern Washington University. Specialises in visual communication, brand identity, and user experience — from concept through to final output. Experienced across print, digital, and product design. Comfortable taking a project from wireframe to working prototype, and from mood board to production-ready asset. Uses AI as a creative tool — integrated into the process to design, build, and produce work that wouldn\'t be possible otherwise.',
   disciplines: [
     'UI/UX Design',
-    'Visual Direction',
-    'Product Thinking',
-    'Accessibility (WCAG)',
-    'Frontend Development',
-    'AI Tool Integration',
+    'Graphic Design',
+    'Visual Communication',
+    'Branding & Identity Design',
+    'Visual Storytelling',
+    'Style Guide & System Design',
+    'AI/Emergent Design Concepts',
   ],
   tools: [
-    'Figma', 'React', 'Electron / Tauri',
-    'Python', 'JavaScript', 'Anthropic API',
+    'Figma',
+    'Adobe Photoshop',
+    'Adobe Illustrator',
+    'Adobe InDesign',
+    'HTML / CSS',
+    'React',
+    'Tauri',
+    'Python',
+    'AI Tools (Claude, etc.)',
   ],
-  note: `"I am a designer first and a developer second. The best software is the
-    kind that doesn't feel like software."`,
-}
-// ── END EDIT ZONE ──────────────────────────────────────────────────────────
+  note: 'You don\'t need a perfect path. Just a direction — and something worth building. Good design disappears. Bad design makes itself known. If the lights go out, learn to see in the dark.',
+};
 
 export default function Personnel() {
   const { devMode } = useSanity()

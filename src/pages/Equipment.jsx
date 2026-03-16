@@ -4,30 +4,33 @@ import { getLogsForLocation } from '../data/loreLogs'
 import styles from './PageShared.module.css'
 import equipStyles from './Equipment.module.css'
 
-// ── EDIT: Add your tools, skills, and design systems here ─────────────────
 const CATEGORIES = [
   {
+    id: 'design',
     label: 'DESIGN',
-    items: ['Figma', 'Accessibility (WCAG)', 'Design Systems', 'User Research'],
+    items: ['UI/UX Design', 'Graphic Design', 'Visual Communication', 'Wireframing & Prototyping', 'Branding & Identity Design', 'Visual Storytelling', 'Style Guide & System Design', 'Accessibility (WCAG)'],
   },
   {
+    id: 'tools',
+    label: 'TOOLS',
+    items: ['Figma', 'Adobe Photoshop', 'Adobe Illustrator', 'Adobe InDesign', 'Unity', 'Procreate'],
+  },
+  {
+    id: 'frontend',
     label: 'FRONTEND',
-    items: ['React', 'HTML / CSS', 'JavaScript', 'Electron', 'Tauri', 'Vite'],
+    items: ['HTML / CSS', 'JavaScript', 'React', 'Vite'],
   },
   {
-    label: 'BACKEND',
-    items: ['Python', 'Node.js', 'REST APIs'],
+    id: 'development',
+    label: 'DEVELOPMENT',
+    items: ['Python', 'Tauri', 'Electron', 'Git / GitHub', 'GitHub Actions'],
   },
   {
+    id: 'ai',
     label: 'AI',
-    items: ['Anthropic Claude API', 'Ollama', 'Local Models'],
+    items: ['Anthropic Claude API', 'AI/Emergent Design Concepts', 'AI-Assisted Workflows'],
   },
-  {
-    label: 'TOOLING',
-    items: ['Git / GitHub', 'GitHub Actions', 'VS Code'],
-  },
-]
-// ── END EDIT ZONE ──────────────────────────────────────────────────────────
+];
 
 export default function Equipment() {
   const { devMode } = useSanity()
