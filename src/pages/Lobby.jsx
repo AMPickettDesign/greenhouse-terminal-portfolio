@@ -26,17 +26,21 @@ const ROOMS = [
 ]
 
 export default function Lobby() {
-  const { devMode } = useSanity()
-  const [bootLines, setBootLines] = useState([])
-  const [bootDone, setBootDone] = useState(false)
-  const [bootComplete, setBootComplete] = useState(false)
+  const { devMode, bootSeen, setBootSeen } = useSanity()
+  const alreadySeen = bootSeen
+  const [bootLines, setBootLines] = useState(alreadySeen ? BOOT_LINES : [])
+  const [bootDone, setBootDone] = useState(alreadySeen)
+  const [bootComplete, setBootComplete] = useState(alreadySeen)
   const [paused, setPaused] = useState(false)
   const pausedRef = useRef(false)
   const logs = getLogsForLocation('lobby')
 
   const skipBoot = useCallback(() => {
-    if (bootComplete && !bootDone) setBootDone(true)
-  }, [bootComplete, bootDone])
+    if (bootComplete && !bootDone) {
+      setBootDone(true)
+      setBootSeen(true)
+    }
+  }, [bootComplete, bootDone, setBootSeen])
 
   const togglePause = useCallback(() => {
     setPaused(prev => {
@@ -46,6 +50,8 @@ export default function Lobby() {
   }, [])
 
   useEffect(() => {
+    if (alreadySeen) return
+
     let cancelled = false
     let timeout
 
@@ -87,13 +93,18 @@ export default function Lobby() {
       }
       if (!cancelled) {
         setBootComplete(true)
-        timeout = setTimeout(() => { if (!cancelled) setBootDone(true) }, 2000)
+        timeout = setTimeout(() => {
+          if (!cancelled) {
+            setBootDone(true)
+            setBootSeen(true)
+          }
+        }, 2000)
       }
     }
 
     typeLines()
     return () => { cancelled = true; clearTimeout(timeout) }
-  }, [])
+  }, [alreadySeen, setBootSeen])
 
   useEffect(() => {
     if (bootDone) return

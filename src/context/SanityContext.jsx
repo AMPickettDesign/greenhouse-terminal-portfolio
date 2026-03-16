@@ -10,6 +10,15 @@ export function SanityProvider({ children }) {
     window.matchMedia('(prefers-reduced-motion: reduce)').matches
   )
   const [isMobile, setIsMobile] = useState(window.innerWidth < 769)
+  const [bootSeen, setBootSeenState] = useState(
+    () => sessionStorage.getItem('greenhollow-boot-seen') === 'true'
+  )
+
+  const setBootSeen = useCallback((val) => {
+    setBootSeenState(val)
+    if (val) sessionStorage.setItem('greenhollow-boot-seen', 'true')
+    else sessionStorage.removeItem('greenhollow-boot-seen')
+  }, [])
 
   // Track viewport width for isMobile
   useEffect(() => {
@@ -83,6 +92,8 @@ export function SanityProvider({ children }) {
       setReducedMotion,
       scramble,
       isMobile,
+      bootSeen,
+      setBootSeen,
     }}>
       {children}
     </SanityContext.Provider>

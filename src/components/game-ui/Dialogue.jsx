@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 import { useSanity } from '../../context/SanityContext'
 import styles from './Dialogue.module.css'
 
@@ -56,31 +56,49 @@ export default function Dialogue({ interactive = false }) {
   const [displayedText, setDisplayedText] = useState('')
   const [typing, setTyping] = useState(false)
   const [done, setDone] = useState(false)
+  const [dialoguePaused, setDialoguePaused] = useState(false)
+  const dialoguePausedRef = useRef(false)
+
+  const toggleDialoguePause = useCallback(() => {
+    setDialoguePaused(prev => {
+      dialoguePausedRef.current = !prev
+      return !prev
+    })
+  }, [])
 
   const corruption = sanity < 70 ? (70 - sanity) / 70 : 0
 
   const currentNode = nodeKey ? conv[nodeKey] : conv.lines[0]
   const rawText = currentNode?.text ?? ''
 
-  // Typewriter effect
+  // Typewriter effect with pause support
   useEffect(() => {
     if (!rawText) { setDone(true); return }
     setTyping(true)
     setDisplayedText('')
     setDone(false)
+    setDialoguePaused(false)
+    dialoguePausedRef.current = false
     let i = 0
+    let cancelled = false
     const speed = Math.max(20, 60 - (100 - sanity) * 0.4)
-    const interval = setInterval(() => {
+
+    function tick() {
+      if (cancelled) return
+      if (dialoguePausedRef.current) { setTimeout(tick, 50); return }
       i++
       const slice = rawText.slice(0, i)
       setDisplayedText(corruptText(slice, corruption))
       if (i >= rawText.length) {
-        clearInterval(interval)
         setTyping(false)
         setDone(true)
+        return
       }
-    }, speed)
-    return () => clearInterval(interval)
+      setTimeout(tick, speed)
+    }
+    setTimeout(tick, speed)
+
+    return () => { cancelled = true }
   }, [rawText, sanity])
 
   const handleChoice = (choice) => {
@@ -108,7 +126,12 @@ export default function Dialogue({ interactive = false }) {
   }))
 
   return (
-    <div className={styles.dialogue} data-corruption={corruption > 0.5 ? 'high' : 'low'}>
+    <div
+      className={styles.dialogue}
+      data-corruption={corruption > 0.5 ? 'high' : 'low'}
+      onClick={typing ? toggleDialoguePause : undefined}
+      style={typing ? { cursor: 'pointer' } : undefined}
+    >
       <div className={styles.header}>
         <span className={styles.speakerTag}>
           {corruption > 0.6
@@ -122,7 +145,18 @@ export default function Dialogue({ interactive = false }) {
 
       <div className={styles.textBox} role="region" aria-live="polite" aria-label="Dialogue">
         {rawText ? (
-          <p className={styles.dialogueText}>{displayedText}{typing && <span className={styles.cursor} aria-hidden="true">▋</span>}</p>
+          <>
+            <p className={styles.dialogueText}>
+              {displayedText}
+              {typing && !dialoguePaused && <span className={styles.cursor} aria-hidden="true">▋</span>}
+              {dialoguePaused && <span className={styles.cursor} aria-hidden="true" style={{ opacity: 0.5 }}>▋</span>}
+            </p>
+            {dialoguePaused && (
+              <span style={{ fontFamily: 'var(--font-terminal)', fontSize: '0.6rem', letterSpacing: '0.15em', color: 'var(--text-dim)', display: 'block', marginTop: '4px' }}>
+                PAUSED — CLICK TO RESUME
+              </span>
+            )}
+          </>
         ) : (
           <p className={styles.dialogueText} style={{ color: 'var(--ash)' }}>
             {done ? '[END OF TRANSMISSION]' : ''}
