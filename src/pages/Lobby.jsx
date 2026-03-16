@@ -27,13 +27,22 @@ const ROOMS = [
 
 export default function Lobby() {
   const { devMode, bootSeen, setBootSeen } = useSanity()
-  const alreadySeen = bootSeen
-  const [bootLines, setBootLines] = useState(alreadySeen ? BOOT_LINES : [])
-  const [bootDone, setBootDone] = useState(alreadySeen)
-  const [bootComplete, setBootComplete] = useState(alreadySeen)
+  const [bootLines, setBootLines] = useState([])
+  const [bootDone, setBootDone] = useState(false)
+  const [bootComplete, setBootComplete] = useState(false)
   const [paused, setPaused] = useState(false)
   const pausedRef = useRef(false)
+  const hasRunRef = useRef(false)
   const logs = getLogsForLocation('lobby')
+
+  // If boot was already seen (return visit), skip immediately
+  useEffect(() => {
+    if (bootSeen && !bootDone) {
+      setBootLines([...BOOT_LINES])
+      setBootComplete(true)
+      setBootDone(true)
+    }
+  }, [bootSeen, bootDone])
 
   const skipBoot = useCallback(() => {
     if (bootComplete && !bootDone) {
@@ -50,7 +59,8 @@ export default function Lobby() {
   }, [])
 
   useEffect(() => {
-    if (alreadySeen) return
+    if (bootSeen || hasRunRef.current) return
+    hasRunRef.current = true
 
     let cancelled = false
     let timeout
@@ -104,7 +114,7 @@ export default function Lobby() {
 
     typeLines()
     return () => { cancelled = true; clearTimeout(timeout) }
-  }, [alreadySeen, setBootSeen])
+  }, [bootSeen, setBootSeen])
 
   useEffect(() => {
     if (bootDone) return
