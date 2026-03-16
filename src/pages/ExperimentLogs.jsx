@@ -89,6 +89,7 @@ export default function ExperimentLogs() {
               className={styles.projectCard}
               target={project.link !== '#' ? '_blank' : undefined}
               rel="noopener noreferrer"
+              aria-label={`${project.title} — ${project.subtitle}`}
             >
               <div className={styles.projectCardCode}>
                 {project.id.toUpperCase()} ·{' '}

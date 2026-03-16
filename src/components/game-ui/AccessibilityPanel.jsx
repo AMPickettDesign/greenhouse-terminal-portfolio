@@ -67,7 +67,7 @@ export default function AccessibilityPanel() {
             </button>
           </div>
           <p className={styles.settingDesc}>
-            Increases foreground/background contrast ratios to WCAG AA standards.
+            Increases foreground/background contrast ratios to WCAG AAA standards (7:1).
             The atmosphere is maintained — the readability is improved.
           </p>
         </div>

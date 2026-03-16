@@ -122,16 +122,29 @@ export default function Lobby() {
       if (bootComplete) { skipBoot(); return }
       togglePause()
     }
+    const handleKey = (e) => {
+      if (e.key === 'Tab') return
+      if (bootComplete) { skipBoot(); return }
+      if (e.key === 'Escape') {
+        // Escape skips boot entirely (AAA 2.2.3 — no forced timing)
+        setBootLines([...BOOT_LINES])
+        setBootComplete(true)
+        setBootDone(true)
+        setBootSeen(true)
+        return
+      }
+      if (e.key === ' ' || e.key === 'p' || e.key === 'P') {
+        e.preventDefault()
+        togglePause()
+      }
+    }
     window.addEventListener('pointerdown', handleClick)
-    return () => window.removeEventListener('pointerdown', handleClick)
-  }, [bootComplete, bootDone, skipBoot, togglePause])
-
-  useEffect(() => {
-    if (!bootComplete || bootDone) return
-    const handleKey = () => skipBoot()
     window.addEventListener('keydown', handleKey)
-    return () => window.removeEventListener('keydown', handleKey)
-  }, [bootComplete, bootDone, skipBoot])
+    return () => {
+      window.removeEventListener('pointerdown', handleClick)
+      window.removeEventListener('keydown', handleKey)
+    }
+  }, [bootComplete, bootDone, skipBoot, togglePause, setBootSeen])
 
   return (
     <main className={styles.lobby}>
@@ -152,8 +165,11 @@ export default function Lobby() {
                 {line ? `> ${line}` : ''}
               </div>
             ))}
+            {!bootDone && !bootComplete && !paused && (
+              <div className={styles.bootHint}>SPACE TO PAUSE · ESC TO SKIP</div>
+            )}
             {paused && !bootComplete && (
-              <div className={styles.pausedIndicator}>PAUSED</div>
+              <div className={styles.pausedIndicator}>PAUSED — SPACE OR CLICK TO RESUME · ESC TO SKIP</div>
             )}
             {bootComplete && !bootDone && (
               <div className={styles.skipPrompt}>PRESS ANY KEY TO CONTINUE</div>

@@ -22,9 +22,9 @@
   --amber-dim:    #7a4a0e;
   --blood:        #8b1a1a;
   --blood-bright: #c0392b;
-  --ash:          #4a4a46;
-  --smoke:        #8a8a82;
-  --fog:          #c8c8be;
+  --ash:          #7a7a74;
+  --smoke:        #a0a098;
+  --fog:          #d0d0c6;
   --white:        #e8e8e0;
 
   /* Semantic */
@@ -38,7 +38,7 @@
   --text-dim:     var(--ash);
   --text-lore:    var(--fog);
   --accent:       var(--amber);
-  --accent-dim:   var(--amber-dim);
+  --accent-dim:   #a06012;
   --danger:       var(--blood);
   --danger-bright: var(--blood-bright);
 
@@ -134,7 +134,7 @@ h1, h2, h3 {
   font-family: var(--font-display);
   color: var(--text-primary);
   letter-spacing: 0.05em;
-  line-height: 1.1;
+  line-height: 1.2;
 }
 
 h1 { font-size: clamp(2.5rem, 6vw, 5rem); }
@@ -145,6 +145,7 @@ p, li {
   font-family: var(--font-terminal);
   color: var(--text-secondary);
   line-height: 1.7;
+  max-width: 80ch;
 }
 
 .lore-text {
@@ -237,7 +238,7 @@ p, li {
 
 @keyframes pulse-dot {
   0%, 100% { opacity: 1; }
-  50%       { opacity: 0.3; }
+  50%       { opacity: 0.6; }
 }
 
 /* ======== LINKS ======== */
@@ -273,9 +274,9 @@ a:hover { color: var(--accent); }
 /* ======== FLICKER ANIMATION ======== */
 @keyframes flicker {
   0%, 95%, 100%  { opacity: 1; }
-  96%            { opacity: 0.6; }
+  96%            { opacity: 0.7; }
   97%            { opacity: 1; }
-  98%            { opacity: 0.4; }
+  98%            { opacity: 0.6; }
   99%            { opacity: 0.9; }
 }
 
@@ -323,8 +324,9 @@ a:hover { color: var(--accent); }
 
 /* ======== ACCESSIBILITY ======== */
 :focus-visible {
-  outline: 2px solid var(--accent);
-  outline-offset: 2px;
+  outline: 3px solid var(--accent);
+  outline-offset: 3px;
+  box-shadow: 0 0 0 6px rgba(212, 130, 26, 0.25);
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -334,13 +336,27 @@ a:hover { color: var(--accent); }
   }
 }
 
-/* High contrast mode hook */
+/* High contrast mode — AAA 7:1 ratios on all text */
 .high-contrast {
-  --terminal:  #ffffff;
-  --sage:      #cccccc;
-  --text-secondary: #ffffff;
-  --bg:        #000000;
-  --bg-panel:  #111111;
+  --terminal:       #ffffff;
+  --sage:           #e0e0e0;
+  --pale-green:     #f0f0f0;
+  --text-primary:   #ffffff;
+  --text-secondary: #e0e0e0;
+  --text-dim:       #b0b0b0;
+  --text-lore:      #f0f0e8;
+  --ash:            #b0b0a8;
+  --fog:            #f0f0e8;
+  --smoke:          #d0d0c8;
+  --amber:          #f0a030;
+  --accent:         #f0a030;
+  --accent-dim:     #d08020;
+  --danger-bright:  #ff6060;
+  --bg:             #000000;
+  --bg-panel:       #0a0a0a;
+  --bg-elevated:    #111111;
+  --border:         #444444;
+  --border-dim:     #333333;
 }
 
 /* =====================================================

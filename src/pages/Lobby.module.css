@@ -45,6 +45,15 @@
   to   { opacity: 1; transform: translateY(0); }
 }
 
+.bootHint {
+  margin-top: var(--gap-sm);
+  font-family: var(--font-terminal);
+  font-size: 0.6rem;
+  letter-spacing: 0.12em;
+  color: var(--text-dim);
+  opacity: 0.6;
+}
+
 .pausedIndicator {
   margin-top: var(--gap-sm);
   font-family: var(--font-terminal);
