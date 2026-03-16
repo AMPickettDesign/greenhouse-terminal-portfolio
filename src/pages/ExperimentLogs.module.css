@@ -1,0 +1,290 @@
+/* ExperimentLogs — Filing Cabinet Drawer UI */
+
+.drawer {
+  position: relative;
+  perspective: 800px;
+  padding-top: var(--gap-md);
+}
+
+/* The drawer label */
+.drawerLabel {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-family: var(--font-terminal);
+  font-size: 0.6rem;
+  letter-spacing: 0.15em;
+  color: var(--text-dim);
+  padding: var(--gap-sm) var(--gap-md);
+  border: 1px solid var(--border);
+  border-bottom: none;
+  background: var(--bg-panel);
+}
+
+.drawerHandle {
+  width: 40px;
+  height: 4px;
+  background: var(--moss);
+  border-radius: 2px;
+  display: inline-block;
+}
+
+/* Stack container — holds all folders */
+.fileStack {
+  position: relative;
+  border: 1px solid var(--border);
+  background: var(--bg-panel);
+  min-height: 200px;
+  padding: 0;
+}
+
+/* Individual folder */
+.folder {
+  position: relative;
+  border-bottom: 1px solid var(--border-dim);
+  transition: background var(--trans-fast);
+}
+
+.folder:last-child {
+  border-bottom: none;
+}
+
+/* The tab sticking up — staggered left to right */
+.folderTab {
+  display: flex;
+  align-items: center;
+  gap: var(--gap-sm);
+  width: 100%;
+  padding: var(--gap-sm) var(--gap-md);
+  padding-left: var(--gap-md);
+  background: var(--bg);
+  border: none;
+  border-left: 3px solid var(--border-dim);
+  font-family: var(--font-terminal);
+  font-size: 0.75rem;
+  letter-spacing: 0.1em;
+  color: var(--text-dim);
+  cursor: pointer;
+  text-align: left;
+  min-height: 48px;
+  transition: all var(--trans-fast);
+  position: relative;
+}
+
+/* Staggered indent — each tab indented more, like diagonal folder tabs */
+.folder:nth-child(1) .folderTab { padding-left: calc(var(--gap-md)); }
+.folder:nth-child(2) .folderTab { padding-left: calc(var(--gap-md) + 20px); }
+.folder:nth-child(3) .folderTab { padding-left: calc(var(--gap-md) + 40px); }
+.folder:nth-child(4) .folderTab { padding-left: calc(var(--gap-md) + 60px); }
+.folder:nth-child(5) .folderTab { padding-left: calc(var(--gap-md) + 80px); }
+.folder:nth-child(6) .folderTab { padding-left: calc(var(--gap-md) + 100px); }
+.folder:nth-child(7) .folderTab { padding-left: calc(var(--gap-md) + 120px); }
+.folder:nth-child(8) .folderTab { padding-left: calc(var(--gap-md) + 140px); }
+
+/* Depth shadow — each folder gets slightly deeper shadow for 3D stack feel */
+.folder:nth-child(1) .folderTab { box-shadow: inset 0 -1px 0 var(--border-dim); }
+.folder:nth-child(2) .folderTab { box-shadow: inset 0 -1px 0 var(--border-dim), 0 1px 2px rgba(0,0,0,0.1); }
+.folder:nth-child(3) .folderTab { box-shadow: inset 0 -1px 0 var(--border-dim), 0 1px 3px rgba(0,0,0,0.15); }
+.folder:nth-child(4) .folderTab { box-shadow: inset 0 -1px 0 var(--border-dim), 0 1px 4px rgba(0,0,0,0.2); }
+.folder:nth-child(5) .folderTab { box-shadow: inset 0 -1px 0 var(--border-dim), 0 2px 5px rgba(0,0,0,0.25); }
+.folder:nth-child(6) .folderTab { box-shadow: inset 0 -1px 0 var(--border-dim), 0 2px 6px rgba(0,0,0,0.3); }
+
+/* Hover state */
+.folderTab:hover {
+  background: var(--mid-green);
+  color: var(--terminal);
+  border-left-color: var(--sage);
+}
+
+/* Active/open folder tab */
+.folderTab.tabActive {
+  background: var(--mid-green);
+  color: var(--terminal);
+  border-left-color: var(--terminal);
+}
+
+/* Tab content layout */
+.tabCode {
+  font-size: 0.55rem;
+  letter-spacing: 0.15em;
+  color: var(--ash);
+  flex-shrink: 0;
+  min-width: 55px;
+}
+
+.tabTitle {
+  flex: 1;
+  font-size: 0.8rem;
+  letter-spacing: 0.08em;
+}
+
+.tabStatus {
+  font-size: 0.55rem;
+  letter-spacing: 0.1em;
+  flex-shrink: 0;
+}
+
+.tabArrow {
+  font-size: 0.7rem;
+  color: var(--ash);
+  transition: transform var(--trans-fast);
+  flex-shrink: 0;
+}
+
+.tabActive .tabArrow {
+  transform: rotate(180deg);
+  color: var(--terminal);
+}
+
+/* Folder contents — the "paper" inside */
+.folderContents {
+  background: var(--bg-panel);
+  border-top: 1px solid var(--border-dim);
+  padding: var(--gap-lg) var(--gap-xl);
+  position: relative;
+  animation: folderOpen 0.2s ease-out;
+}
+
+/* Subtle paper edge effect on the left */
+.folderContents::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: var(--sage);
+}
+
+/* Inner paper feel — slightly lighter bg stripe */
+.folderContents::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 3px;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(90deg, rgba(74, 124, 89, 0.04) 0%, transparent 30%);
+  pointer-events: none;
+}
+
+@keyframes folderOpen {
+  from {
+    opacity: 0;
+    max-height: 0;
+    transform: perspective(400px) rotateX(-5deg);
+    transform-origin: top center;
+  }
+  to {
+    opacity: 1;
+    max-height: 600px;
+    transform: perspective(400px) rotateX(0);
+    transform-origin: top center;
+  }
+}
+
+.fileSubtitle {
+  font-family: var(--font-terminal);
+  font-size: 0.65rem;
+  letter-spacing: 0.12em;
+  color: var(--ash);
+  margin-bottom: var(--gap-md);
+}
+
+.fileDesc {
+  font-family: var(--font-lore);
+  font-size: 0.95rem;
+  color: var(--text-lore);
+  line-height: 1.8;
+  margin-bottom: var(--gap-lg);
+  position: relative;
+  z-index: 1;
+}
+
+.fileTags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-bottom: var(--gap-lg);
+  position: relative;
+  z-index: 1;
+}
+
+.fileTag {
+  font-family: var(--font-terminal);
+  font-size: 0.55rem;
+  letter-spacing: 0.1em;
+  border: 1px solid var(--border-dim);
+  padding: 2px 8px;
+  color: var(--ash);
+}
+
+.fileLink {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--gap-sm);
+  font-family: var(--font-terminal);
+  font-size: 0.75rem;
+  letter-spacing: 0.1em;
+  color: var(--terminal);
+  text-decoration: none;
+  border: 1px solid var(--sage);
+  padding: var(--gap-sm) var(--gap-md);
+  min-height: 44px;
+  min-width: 44px;
+  transition: all var(--trans-fast);
+  position: relative;
+  z-index: 1;
+}
+
+.fileLink:hover {
+  border-color: var(--terminal);
+  color: var(--white);
+  background: var(--mid-green);
+}
+
+.fileLinkArrow {
+  transition: transform var(--trans-fast);
+}
+
+.fileLink:hover .fileLinkArrow {
+  transform: translateX(4px);
+}
+
+/* Mobile: max-width: 768px */
+@media (max-width: 768px) {
+  /* Reduce stagger on mobile — less horizontal space */
+  .folder:nth-child(1) .folderTab { padding-left: var(--gap-md); }
+  .folder:nth-child(2) .folderTab { padding-left: calc(var(--gap-md) + 10px); }
+  .folder:nth-child(3) .folderTab { padding-left: calc(var(--gap-md) + 20px); }
+  .folder:nth-child(4) .folderTab { padding-left: calc(var(--gap-md) + 30px); }
+  .folder:nth-child(5) .folderTab { padding-left: calc(var(--gap-md) + 40px); }
+  .folder:nth-child(6) .folderTab { padding-left: calc(var(--gap-md) + 50px); }
+  .folder:nth-child(7) .folderTab { padding-left: calc(var(--gap-md) + 60px); }
+  .folder:nth-child(8) .folderTab { padding-left: calc(var(--gap-md) + 70px); }
+
+  .folderContents {
+    padding: var(--gap-md);
+  }
+
+  .tabCode {
+    display: none;
+  }
+}
+
+/* Small mobile: max-width: 480px */
+@media (max-width: 480px) {
+  /* Even less stagger */
+  .folder:nth-child(1) .folderTab { padding-left: var(--gap-sm); }
+  .folder:nth-child(2) .folderTab { padding-left: calc(var(--gap-sm) + 8px); }
+  .folder:nth-child(3) .folderTab { padding-left: calc(var(--gap-sm) + 16px); }
+  .folder:nth-child(4) .folderTab { padding-left: calc(var(--gap-sm) + 24px); }
+  .folder:nth-child(5) .folderTab { padding-left: calc(var(--gap-sm) + 32px); }
+  .folder:nth-child(6) .folderTab { padding-left: calc(var(--gap-sm) + 40px); }
+  .folder:nth-child(7) .folderTab { padding-left: calc(var(--gap-sm) + 48px); }
+  .folder:nth-child(8) .folderTab { padding-left: calc(var(--gap-sm) + 56px); }
+
+  .tabTitle {
+    font-size: 0.7rem;
+  }
+}

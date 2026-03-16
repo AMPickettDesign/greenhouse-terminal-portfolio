@@ -197,6 +197,29 @@
   color: var(--text-dim);
 }
 
+/* Replay briefing button */
+.replayBtn {
+  display: inline-block;
+  margin-top: var(--gap-lg);
+  font-family: var(--font-terminal);
+  font-size: 0.8rem;
+  letter-spacing: 0.12em;
+  color: var(--terminal);
+  background: transparent;
+  border: 1px solid var(--sage);
+  padding: var(--gap-sm) var(--gap-lg);
+  cursor: pointer;
+  min-height: 44px;
+  min-width: 44px;
+  transition: all var(--trans-fast);
+}
+
+.replayBtn:hover {
+  border-color: var(--terminal);
+  color: var(--white);
+  background: var(--mid-green);
+}
+
 /* Logs */
 .logsSection {}
 

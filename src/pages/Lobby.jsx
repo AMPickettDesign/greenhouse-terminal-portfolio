@@ -210,6 +210,13 @@ export default function Lobby() {
                 documentation, and operational systems. All sections are accessible.
                 Environmental anomalies do not affect information retrieval.
               </p>
+              <button
+                className={styles.replayBtn}
+                onClick={() => setShowBriefing(true)}
+                aria-label="Replay facility briefing"
+              >
+                [ REPLAY BRIEFING ]
+              </button>
             </section>
 
             {/* Facility map */}

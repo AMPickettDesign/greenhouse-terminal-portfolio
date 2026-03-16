@@ -1,7 +1,9 @@
+import { useState } from 'react'
 import { useSanity } from '../context/SanityContext'
 import LoreLog from '../components/layout/LoreLog'
 import { getLogsForLocation } from '../data/loreLogs'
-import styles from './PageShared.module.css'
+import pageStyles from './PageShared.module.css'
+import styles from './ExperimentLogs.module.css'
 
 const PROJECTS = [
   {
@@ -61,68 +63,110 @@ const PROJECTS = [
 ];
 
 const STATUS_COLORS = {
-  COMPLETE: 'var(--sage)',
+  COMPLETE:    'var(--sage)',
   ONGOING:     'var(--amber)',
   UNCONTAINED: 'var(--danger-bright)',
-  CONCEPT:  'var(--text-dim)',
-  REDACTED: 'var(--danger-bright)',
+  CONCEPT:     'var(--text-dim)',
+  REDACTED:    'var(--danger-bright)',
 }
 
 export default function ExperimentLogs() {
   const { devMode } = useSanity()
+  const [openFolder, setOpenFolder] = useState(null)
   const logs = getLogsForLocation('experiment-logs')
 
-  return (
-    <main className={styles.page}>
-      <div className={styles.container}>
+  const toggleFolder = (id) => {
+    setOpenFolder(prev => prev === id ? null : id)
+  }
 
-        <header className={styles.pageHeader}>
-          <div className={styles.pageCode}>SEC-02 / EXPERIMENT LOGS</div>
-          <h1 className={styles.pageTitle}>Case Studies</h1>
+  return (
+    <main className={pageStyles.page}>
+      <div className={pageStyles.container}>
+
+        <header className={pageStyles.pageHeader}>
+          <div className={pageStyles.pageCode}>SEC-02 / EXPERIMENT LOGS</div>
+          <h1 className={pageStyles.pageTitle}>Case Studies</h1>
         </header>
 
-        <div className={styles.projectGrid}>
-          {PROJECTS.map(project => (
-            <a
-              key={project.id}
-              href={project.link}
-              className={styles.projectCard}
-              target={project.link !== '#' ? '_blank' : undefined}
-              rel="noopener noreferrer"
-              aria-label={`${project.title} — ${project.subtitle}`}
-            >
-              <div className={styles.projectCardCode}>
-                {project.id.toUpperCase()} ·{' '}
-                <span style={{ color: STATUS_COLORS[project.status] || 'var(--ash)' }}>
-                  {project.status}
-                </span>
+        {/* Filing cabinet drawer */}
+        <div className={styles.drawer}>
+          <div className={styles.drawerLabel}>
+            <span>FILE DRAWER — EXPERIMENT RECORDS</span>
+            <span className={styles.drawerHandle} aria-hidden="true" />
+          </div>
+
+          <div className={styles.fileStack}>
+            {PROJECTS.map(project => (
+              <div key={project.id} className={styles.folder}>
+                {/* Folder tab */}
+                <button
+                  className={[
+                    styles.folderTab,
+                    openFolder === project.id ? styles.tabActive : '',
+                  ].join(' ')}
+                  onClick={() => toggleFolder(project.id)}
+                  aria-expanded={openFolder === project.id}
+                  aria-controls={`folder-${project.id}`}
+                >
+                  <span className={styles.tabCode}>{project.id.toUpperCase()}</span>
+                  <span className={styles.tabTitle}>{project.title}</span>
+                  <span
+                    className={styles.tabStatus}
+                    style={{ color: STATUS_COLORS[project.status] || 'var(--ash)' }}
+                  >
+                    {project.status}
+                  </span>
+                  <span className={styles.tabArrow} aria-hidden="true">▼</span>
+                </button>
+
+                {/* Folder contents — the document inside */}
+                {openFolder === project.id && (
+                  <div
+                    className={styles.folderContents}
+                    id={`folder-${project.id}`}
+                    role="region"
+                    aria-label={`${project.title} project details`}
+                  >
+                    <div className={styles.fileSubtitle}>{project.subtitle}</div>
+                    <p className={styles.fileDesc}>{project.desc}</p>
+                    <div className={styles.fileTags}>
+                      {project.tags.map(t => (
+                        <span key={t} className={styles.fileTag}>{t}</span>
+                      ))}
+                    </div>
+                    {project.link && project.link !== '#' && (
+                      <a
+                        href={project.link}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className={styles.fileLink}
+                      >
+                        VIEW PROJECT <span className={styles.fileLinkArrow} aria-hidden="true">→</span>
+                      </a>
+                    )}
+                  </div>
+                )}
               </div>
-              <div className={styles.projectCardTitle}>{project.title}</div>
-              <p className={styles.projectCardDesc}>{project.desc}</p>
-              <div className={styles.projectCardTags}>
-                {project.tags.map(t => (
-                  <span key={t} className={styles.projectCardTag}>{t}</span>
-                ))}
-              </div>
-            </a>
-          ))}
+            ))}
+          </div>
         </div>
 
         {logs.length > 0 && (
-          <section className={styles.logsSection}>
-            <div className={styles.sectionHeader}>RECOVERED LOGS</div>
+          <section className={pageStyles.logsSection}>
+            <div className={pageStyles.sectionHeader}>RECOVERED LOGS</div>
             {logs.map(log => <LoreLog key={log.id} log={log} />)}
           </section>
         )}
 
         {devMode && (
-          <section className={styles.devPanel}>
-            <div className={styles.panelHeader}>[ DEVELOPER MODE ]</div>
-            <p className={styles.bodyText}>
-              <strong>Design decision:</strong> "Experiment Logs" reframes projects as research
-              artifacts. Each card is scannable — status, title, description, tags — before
-              clicking through. The lore log placed here references anomalous growth data,
-              thematically echoing unexpected outcomes in design work.
+          <section className={pageStyles.devPanel}>
+            <div className={pageStyles.panelHeader}>[ DEVELOPER MODE ]</div>
+            <p className={pageStyles.bodyText}>
+              <strong>Design decision:</strong> Projects are presented as files in a filing
+              cabinet drawer — tabs stagger diagonally like physical folder tabs. Clicking a
+              folder flips it open to reveal the project details. Only one folder is open at a
+              time, encouraging focused reading. The interaction echoes the facility's physical
+              document storage aesthetic.
             </p>
           </section>
         )}
