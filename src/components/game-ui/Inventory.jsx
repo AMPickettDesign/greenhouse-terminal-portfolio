@@ -21,12 +21,11 @@ const CORRUPT_DESCS = [
 ]
 
 export default function Inventory({ interactive = false }) {
-  const { sanity, equippedTool } = useSanity()
+  const { sanity } = useSanity()
   const [items] = useState(INITIAL_ITEMS)
   const [selected, setSelected] = useState(null)
 
-  const penEquipped = equippedTool === 'pen'
-  const corruptionLevel = penEquipped ? 0 : (sanity < 60 ? (60 - sanity) / 60 : 0)
+  const corruptionLevel = sanity < 60 ? (60 - sanity) / 60 : 0
 
   const displayName = (item) => {
     if (corruptionLevel > 0.5 && item.corrupted) return CORRUPT_NAMES[item.id % CORRUPT_NAMES.length]

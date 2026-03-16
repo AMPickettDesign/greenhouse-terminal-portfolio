@@ -51,16 +51,13 @@ function shuffle(arr) {
 }
 
 export default function Journal({ interactive = false }) {
-  const { sanity, equippedTool } = useSanity()
+  const { sanity } = useSanity()
   const [entries, setEntries] = useState(ENTRIES)
   const [selected, setSelected] = useState(ENTRIES[0].id)
   const [lastSanity, setLastSanity] = useState(sanity)
 
-  const penEquipped = equippedTool === 'pen'
-
-  // Reorder entries when sanity crosses thresholds (not when pen equipped)
+  // Reorder entries when sanity crosses thresholds
   useEffect(() => {
-    if (penEquipped) return
     if (sanity < 40 && lastSanity >= 40) {
       setEntries(prev => shuffle(prev))
     }
@@ -68,9 +65,9 @@ export default function Journal({ interactive = false }) {
       setEntries(prev => shuffle(prev))
     }
     setLastSanity(sanity)
-  }, [sanity, lastSanity, penEquipped])
+  }, [sanity, lastSanity])
 
-  const corruption = penEquipped ? 0 : (sanity < 60 ? (60 - sanity) / 60 : 0)
+  const corruption = sanity < 60 ? (60 - sanity) / 60 : 0
 
   const corruptTitle = (title) => {
     if (corruption < 0.4) return title
@@ -85,8 +82,8 @@ export default function Journal({ interactive = false }) {
     <div className={styles.journal} role="region" aria-label="Field journal">
       <div className={styles.header}>
         <span className={styles.title}>FIELD JOURNAL</span>
-        {sanity < 40 && !penEquipped && (
-          <span className={styles.warning}>⚠ ENTRIES REORDERING — EQUIP A TOOL TO STABILIZE</span>
+        {sanity < 40 && (
+          <span className={styles.warning}>⚠ ENTRIES REORDERING</span>
         )}
       </div>
 

@@ -50,7 +50,7 @@ function corruptText(text, intensity) {
 }
 
 export default function Dialogue({ interactive = false }) {
-  const { sanity, equippedTool } = useSanity()
+  const { sanity } = useSanity()
   const [conv] = useState(CONVERSATIONS[0])
   const [nodeKey, setNodeKey] = useState(null) // null = opening line
   const [displayedText, setDisplayedText] = useState('')
@@ -59,8 +59,6 @@ export default function Dialogue({ interactive = false }) {
   const [dialoguePaused, setDialoguePaused] = useState(false)
   const dialoguePausedRef = useRef(false)
 
-  const penEquipped = equippedTool === 'pen'
-
   const toggleDialoguePause = useCallback(() => {
     setDialoguePaused(prev => {
       dialoguePausedRef.current = !prev
@@ -68,7 +66,7 @@ export default function Dialogue({ interactive = false }) {
     })
   }, [])
 
-  const corruption = penEquipped ? 0 : (sanity < 70 ? (70 - sanity) / 70 : 0)
+  const corruption = sanity < 70 ? (70 - sanity) / 70 : 0
 
   const currentNode = nodeKey ? conv[nodeKey] : conv.lines[0]
   const rawText = currentNode?.text ?? ''

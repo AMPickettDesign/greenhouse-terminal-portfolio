@@ -12,12 +12,11 @@ import { useSanity } from '../../context/SanityContext'
  *   className  — additional class names
  */
 export default function GlitchText({ text, tag: Tag = 'span', alwaysGlitch = false, className = '' }) {
-  const { sanity, scramble, reducedMotion, isMobile, equippedTool } = useSanity()
+  const { sanity, scramble, reducedMotion, isMobile } = useSanity()
   const [displayed, setDisplayed] = useState(text)
   const frameRef = useRef(null)
 
-  const penEquipped = equippedTool === 'pen'
-  const shouldGlitch = !penEquipped && !isMobile && (alwaysGlitch || sanity < 60)
+  const shouldGlitch = !isMobile && (alwaysGlitch || sanity < 60)
 
   useEffect(() => {
     if (isMobile || reducedMotion || !shouldGlitch) {

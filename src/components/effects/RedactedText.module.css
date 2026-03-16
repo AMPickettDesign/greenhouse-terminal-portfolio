@@ -1,0 +1,47 @@
+.redactedBlock {
+  position: relative;
+  display: inline;
+  cursor: help;
+}
+
+/* The blacked-out text — visible by default */
+.blockedText {
+  background: var(--ash);
+  color: var(--ash);
+  padding: 0 2px;
+  transition: background var(--trans-fast), color var(--trans-fast);
+}
+
+/* The clean text — hidden by default, shown on hover */
+.revealedText {
+  position: absolute;
+  left: 0;
+  top: 0;
+  color: var(--terminal);
+  background: var(--bg-elevated);
+  padding: 0 2px;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--trans-fast);
+}
+
+/* On hover: hide the blocks, show the revealed text */
+.redactedBlock:hover .blockedText {
+  background: var(--bg-elevated);
+  color: transparent;
+}
+
+.redactedBlock:hover .revealedText {
+  opacity: 1;
+}
+
+/* On focus for keyboard users */
+.redactedBlock:focus-within .blockedText {
+  background: var(--bg-elevated);
+  color: transparent;
+}
+
+.redactedBlock:focus-within .revealedText {
+  opacity: 1;
+}
