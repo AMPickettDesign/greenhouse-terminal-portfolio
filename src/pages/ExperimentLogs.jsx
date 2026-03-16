@@ -55,14 +55,15 @@ const PROJECTS = [
     subtitle: 'Three AI siblings who live on your desktop',
     desc: 'Three AI siblings who live on your desktop. Abi, David, and Quinn aren\'t assistants — they\'re fully realised digital people with distinct personalities, moods, and relationships with each other. They remember you. They grow with you. They notice when you\'re gone. Built with Tauri and Python.',
     tags: ['AI', 'Desktop App', 'Tauri', 'Python', 'Creative Development'],
-    status: 'ONGOING',
+    status: 'UNCONTAINED',
     link: 'https://github.com/AMPickettDesign/Triur.ai',
   },
 ];
 
 const STATUS_COLORS = {
   COMPLETE: 'var(--sage)',
-  ONGOING:  'var(--amber)',
+  ONGOING:     'var(--amber)',
+  UNCONTAINED: 'var(--danger-bright)',
   CONCEPT:  'var(--text-dim)',
   REDACTED: 'var(--danger-bright)',
 }
