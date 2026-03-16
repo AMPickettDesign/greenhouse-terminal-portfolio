@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { useSanity } from '../context/SanityContext'
 import GlitchText from '../components/effects/GlitchText'
 import LoreLog from '../components/layout/LoreLog'
+import Briefing from './Briefing'
 import { getLogsForLocation } from '../data/loreLogs'
 import styles from './Lobby.module.css'
 
@@ -31,6 +32,10 @@ export default function Lobby() {
   const [bootDone, setBootDone] = useState(false)
   const [bootComplete, setBootComplete] = useState(false)
   const [paused, setPaused] = useState(false)
+  const [briefingSeen, setBriefingSeen] = useState(
+    () => localStorage.getItem('ghf-briefing-seen') === 'true'
+  )
+  const [showBriefing, setShowBriefing] = useState(false)
   const pausedRef = useRef(false)
   const hasRunRef = useRef(false)
   const logs = getLogsForLocation('lobby')
@@ -43,6 +48,13 @@ export default function Lobby() {
       setBootDone(true)
     }
   }, [bootSeen, bootDone])
+
+  // Show briefing after boot completes on first visit
+  useEffect(() => {
+    if (bootDone && !briefingSeen) {
+      setShowBriefing(true)
+    }
+  }, [bootDone, briefingSeen])
 
   const skipBoot = useCallback(() => {
     if (bootComplete && !bootDone) {
@@ -177,7 +189,14 @@ export default function Lobby() {
           </div>
         </section>
 
-        {bootDone && (
+        {showBriefing && (
+          <Briefing onEnter={() => {
+            setBriefingSeen(true)
+            setShowBriefing(false)
+          }} />
+        )}
+
+        {bootDone && !showBriefing && (
           <>
             {/* Hero */}
             <section className={styles.hero}>
