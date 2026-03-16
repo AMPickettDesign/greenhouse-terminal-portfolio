@@ -23,18 +23,26 @@ export default function LoreLog({ log }) {
       >
         <span className={styles.logIcon} aria-hidden="true">{open ? '▼' : '▶'}</span>
         <span className={styles.logTitle}>
-          {corrupted ? log.title.replace(/[AEIOU]/g, '█') : log.title}
+          {corrupted
+            ? log.title.replace(/[AEIOU]/g, '█')
+            : penEquipped && log.titleRevealed
+              ? log.titleRevealed
+              : log.title}
         </span>
-        <span className={styles.logDate}>{log.date}</span>
+        <span className={styles.logDate}>
+          {penEquipped && log.dateRevealed ? log.dateRevealed : log.date}
+        </span>
       </button>
 
       {open && (
         <div className={styles.logContent}>
           <div className={styles.logMeta}>
-            <span>AUTHOR: {log.author}</span>
+            <span>AUTHOR: {penEquipped && log.authorRevealed ? log.authorRevealed : log.author}</span>
             <span>LOG ID: {log.id.toUpperCase()}</span>
           </div>
-          <p className={styles.logText}>{log.content}</p>
+          <p className={styles.logText}>
+            {penEquipped && log.revealed ? log.revealed : log.content}
+          </p>
         </div>
       )}
     </div>
