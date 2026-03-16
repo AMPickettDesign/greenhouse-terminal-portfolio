@@ -11,6 +11,63 @@
   pointer-events: none;
 }
 
+/* ── Tooltip ── */
+.tooltip {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  padding: 6px 12px;
+  pointer-events: none;
+  text-align: center;
+  max-width: 280px;
+  margin-bottom: 4px;
+  animation: tooltipIn 0.1s ease;
+}
+
+.tooltipExpanded {
+  max-width: 320px;
+  border-color: var(--sage);
+}
+
+.tooltipName {
+  font-family: var(--font-terminal);
+  font-size: 0.7rem;
+  letter-spacing: 0.12em;
+  color: var(--terminal);
+  line-height: 1.4;
+}
+
+.tooltipShort {
+  font-family: var(--font-lore);
+  font-size: 0.75rem;
+  color: var(--text-dim);
+  font-style: italic;
+  line-height: 1.5;
+  margin-top: 2px;
+}
+
+.tooltipFull {
+  font-family: var(--font-lore);
+  font-size: 0.75rem;
+  color: var(--text-lore);
+  line-height: 1.6;
+  margin-top: 4px;
+}
+
+.tooltipHint {
+  font-family: var(--font-terminal);
+  font-size: 0.55rem;
+  letter-spacing: 0.12em;
+  color: var(--ash);
+  margin-top: 4px;
+  opacity: 0.7;
+}
+
+@keyframes tooltipIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Slot bar ── */
 .slots {
   display: flex;
   gap: 4px;
@@ -67,6 +124,7 @@
   letter-spacing: 0;
 }
 
+/* ── Equipped label ── */
 .equipped {
   font-family: var(--font-terminal);
   font-size: 0.6rem;
@@ -85,7 +143,7 @@
   }
 }
 
-/* Mobile: make sure it sits above the 60px bottom tab bar */
+/* Mobile: above the 60px bottom tab bar */
 @media (max-width: 768px) {
   .toolbelt {
     bottom: 68px;
@@ -94,5 +152,13 @@
   .slot {
     width: 44px;
     height: 44px;
+  }
+
+  .tooltip {
+    max-width: 240px;
+  }
+
+  .tooltipExpanded {
+    max-width: 280px;
   }
 }
