@@ -49,19 +49,16 @@ export default function Lobby() {
     }
   }, [bootSeen, bootDone])
 
-  // When boot is done — show briefing for first-timers, or go straight to main page
-  useEffect(() => {
-    if (bootDone && !briefingSeen && !showBriefing) {
-      setShowBriefing(true)
-    }
-  }, [bootDone, briefingSeen, showBriefing])
-
   const skipBoot = useCallback(() => {
     if (bootComplete && !bootDone) {
+      // Show briefing for first-timers in the same render as bootDone
+      if (!briefingSeen) {
+        setShowBriefing(true)
+      }
       setBootDone(true)
       setBootSeen(true)
     }
-  }, [bootComplete, bootDone, setBootSeen])
+  }, [bootComplete, bootDone, setBootSeen, briefingSeen])
 
   const togglePause = useCallback(() => {
     setPaused(prev => {
@@ -136,6 +133,7 @@ export default function Lobby() {
         // Escape skips boot entirely (AAA 2.2.3 — no forced timing)
         setBootLines([...BOOT_LINES])
         setBootComplete(true)
+        if (!briefingSeen) setShowBriefing(true)
         setBootDone(true)
         setBootSeen(true)
         return
