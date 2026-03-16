@@ -369,10 +369,11 @@ a:hover { color: var(--accent); }
 /* ======== BOTTOM NAV SPACING ======== */
 :root {
   --bottom-nav-height: 60px;
+  --toolbelt-height: 72px;
 }
 
 .has-bottom-nav {
-  padding-bottom: var(--bottom-nav-height);
+  padding-bottom: calc(var(--bottom-nav-height) + var(--toolbelt-height));
 }
 
 /* ======== MOBILE PERFORMANCE GUARD ======== */

@@ -9,9 +9,10 @@ import styles from './LoreLog.module.css'
  */
 export default function LoreLog({ log }) {
   const [open, setOpen] = useState(false)
-  const { sanity } = useSanity()
+  const { sanity, equippedTool } = useSanity()
 
-  const corrupted = sanity < 40
+  const penEquipped = equippedTool === 'pen'
+  const corrupted = !penEquipped && sanity < 40
 
   return (
     <div className={styles.logWrapper} data-tier={corrupted ? 'corrupted' : 'normal'}>

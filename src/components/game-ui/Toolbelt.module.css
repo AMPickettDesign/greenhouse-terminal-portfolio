@@ -1,0 +1,98 @@
+.toolbelt {
+  position: fixed;
+  bottom: 68px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 150;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  pointer-events: none;
+}
+
+.slots {
+  display: flex;
+  gap: 4px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  padding: 4px;
+  pointer-events: auto;
+}
+
+.slot {
+  position: relative;
+  width: 48px;
+  height: 48px;
+  background: var(--bg-panel);
+  border: 1px solid var(--border-dim);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: border-color var(--trans-fast), background var(--trans-fast);
+  font-family: var(--font-terminal);
+}
+
+.slot:hover:not(:disabled) {
+  border-color: var(--sage);
+}
+
+.slot.active {
+  border-color: var(--terminal);
+  background: var(--mid-green);
+  box-shadow: 0 0 8px rgba(168, 213, 181, 0.3);
+}
+
+.slot.locked {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.slot:disabled {
+  cursor: not-allowed;
+}
+
+.slotIcon {
+  font-size: 1.2rem;
+  line-height: 1;
+}
+
+.slotKey {
+  position: absolute;
+  bottom: 2px;
+  right: 4px;
+  font-size: 0.5rem;
+  color: var(--ash);
+  letter-spacing: 0;
+}
+
+.equipped {
+  font-family: var(--font-terminal);
+  font-size: 0.6rem;
+  letter-spacing: 0.12em;
+  color: var(--terminal);
+  background: var(--bg);
+  border: 1px solid var(--border);
+  padding: 2px 10px;
+  pointer-events: none;
+}
+
+/* Desktop: no mobile nav, position at very bottom */
+@media (min-width: 769px) {
+  .toolbelt {
+    bottom: 16px;
+  }
+}
+
+/* Mobile: make sure it sits above the 60px bottom tab bar */
+@media (max-width: 768px) {
+  .toolbelt {
+    bottom: 68px;
+  }
+
+  .slot {
+    width: 44px;
+    height: 44px;
+  }
+}

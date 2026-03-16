@@ -9,6 +9,7 @@ import ExperimentLogs from './pages/ExperimentLogs'
 import SystemsLab from './pages/SystemsLab'
 import Equipment from './pages/Equipment'
 import Communications from './pages/Communications'
+import Toolbelt from './components/game-ui/Toolbelt'
 
 const ROUTE_TITLES = {
   '/':            'Lobby — Greenhollow Research Facility',
@@ -34,6 +35,7 @@ export default function App() {
       </a>
       <SanityOverlay />
       <FacilityNav />
+      <Toolbelt />
       <div className="has-bottom-nav" id="main-content">
         <Routes>
           <Route path="/"            element={<Lobby />} />

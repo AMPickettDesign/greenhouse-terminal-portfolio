@@ -10,6 +10,7 @@ export function SanityProvider({ children }) {
     window.matchMedia('(prefers-reduced-motion: reduce)').matches
   )
   const [isMobile, setIsMobile] = useState(window.innerWidth < 769)
+  const [equippedTool, setEquippedTool] = useState(null)
   const [bootSeen, setBootSeenState] = useState(
     () => sessionStorage.getItem('greenhollow-boot-seen') === 'true'
   )
@@ -94,6 +95,8 @@ export function SanityProvider({ children }) {
       isMobile,
       bootSeen,
       setBootSeen,
+      equippedTool,
+      setEquippedTool,
     }}>
       {children}
     </SanityContext.Provider>
