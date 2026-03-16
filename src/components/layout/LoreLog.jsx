@@ -7,7 +7,7 @@ import styles from './LoreLog.module.css'
  * LoreLog
  * Renders a single lore log as a collapsed panel the user can expand.
  * Optional — never hides portfolio information, purely atmospheric.
- * When the eraser is equipped, blacked-out text is automatically revealed.
+ * Supports per-block reveal via segments arrays in lore data.
  */
 export default function LoreLog({ log }) {
   const [open, setOpen] = useState(false)
@@ -30,12 +30,14 @@ export default function LoreLog({ log }) {
         <span className={styles.logIcon} aria-hidden="true">{open ? '▼' : '▶'}</span>
         <span className={styles.logTitle}>
           <RedactedText
+            segments={log.titleSegments}
             redacted={titleText}
             revealed={log.titleRevealed || titleText}
           />
         </span>
         <span className={styles.logDate}>
           <RedactedText
+            segments={log.dateSegments}
             redacted={log.date}
             revealed={log.dateRevealed || log.date}
           />
@@ -48,6 +50,7 @@ export default function LoreLog({ log }) {
             <span>
               AUTHOR:{' '}
               <RedactedText
+                segments={log.authorSegments}
                 redacted={log.author}
                 revealed={log.authorRevealed || log.author}
               />
@@ -55,6 +58,7 @@ export default function LoreLog({ log }) {
             <span>LOG ID: {log.id.toUpperCase()}</span>
           </div>
           <RedactedText
+            segments={log.contentSegments}
             redacted={log.content}
             revealed={log.revealed || log.content}
             tag="p"

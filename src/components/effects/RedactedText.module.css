@@ -3,12 +3,30 @@
   background: var(--ash);
   color: var(--ash);
   padding: 0 2px;
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease;
 }
 
-/* Revealed text — highlighted so the user sees what was uncovered */
+.blockedText:hover {
+  background: rgba(74, 124, 89, 0.08);
+}
+
+/* Temporary reveal (hover / first tap) — reduced opacity */
+.revealedTextTemp {
+  color: var(--terminal);
+  background: rgba(74, 124, 89, 0.1);
+  padding: 0 2px;
+  border-bottom: 1px dashed var(--sage);
+  opacity: 0.7;
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease, opacity 0.2s ease;
+}
+
+/* Permanent reveal (click / second tap / eraser) — full opacity */
 .revealedText {
   color: var(--terminal);
   background: rgba(74, 124, 89, 0.15);
   padding: 0 2px;
   border-bottom: 1px solid var(--sage);
+  transition: background 0.2s ease, color 0.2s ease;
 }

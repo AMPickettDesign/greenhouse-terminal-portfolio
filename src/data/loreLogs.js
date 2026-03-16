@@ -34,18 +34,46 @@ export const loreLogs = [
     location: 'systems-lab',
     content: `ALERT: Primary containment seals in Sectors C through F have entered a degraded state. Recommend immediate inspection. This message has been queued for 72 hours. ALERT: Primary contain███████████ in Sectors █ through █ have entered a de████████ state.`,
     revealed: `ALERT: Primary containment seals in Sectors C through F have entered a degraded state. Recommend immediate inspection. This message has been queued for 72 hours. ALERT: Primary containment seals in Sectors C through F have entered a decommissioned state.`,
+    contentSegments: [
+      'ALERT: Primary containment seals in Sectors C through F have entered a degraded state. Recommend immediate inspection. This message has been queued for 72 hours. ALERT: Primary contain',
+      { blocked: '███████████', revealed: 'ment seals' },
+      ' in Sectors ',
+      { blocked: '█', revealed: 'C' },
+      ' through ',
+      { blocked: '█', revealed: 'F' },
+      ' have entered a de',
+      { blocked: '████████', revealed: 'commissioned' },
+      ' state.',
+    ],
   },
   {
     id: 'log-final',
     title: '[ CORRUPTED — PARTIAL RECOVERY ]',
     titleRevealed: 'FINAL ENTRY — DR. E. MARSH',
+    titleSegments: [
+      { blocked: '[ CORRUPTED — PARTIAL RECOVERY ]', revealed: 'FINAL ENTRY — DR. E. MARSH' },
+    ],
     date: '2020-07-██',
     dateRevealed: '2020-07-14',
+    dateSegments: [
+      '2020-07-',
+      { blocked: '██', revealed: '14' },
+    ],
     author: '████████',
     authorRevealed: 'Dr. E. Marsh',
+    authorSegments: [
+      { blocked: '████████', revealed: 'Dr. E. Marsh' },
+    ],
     location: 'communications',
     content: `If anyone is reading this — leave the way you came in. Don't go past the greenhouse. Don't look at the █████ directly. The facility does not want to be documented. It wants to be █████████████. I'm sorry I ever thought this was just a design project.`,
     revealed: `If anyone is reading this — leave the way you came in. Don't go past the greenhouse. Don't look at the roots directly. The facility does not want to be documented. It wants to be left alone. I'm sorry I ever thought this was just a design project.`,
+    contentSegments: [
+      'If anyone is reading this — leave the way you came in. Don\'t go past the greenhouse. Don\'t look at the ',
+      { blocked: '█████', revealed: 'roots' },
+      ' directly. The facility does not want to be documented. It wants to be ',
+      { blocked: '█████████████', revealed: 'left alone' },
+      '. I\'m sorry I ever thought this was just a design project.',
+    ],
   },
 ]
 
