@@ -98,6 +98,15 @@ export default function RedactedText({
             )
           }
 
+          // Eraser not equipped — static block, no interaction
+          if (!eraserEquipped) {
+            return (
+              <span key={i} className={styles.blockedText} aria-hidden="true">
+                {seg.blocked}
+              </span>
+            )
+          }
+
           if (isHovered) {
             return (
               <span
@@ -109,15 +118,6 @@ export default function RedactedText({
                 onTouchEnd={(e) => handleTouchEnd(idx, e)}
               >
                 {seg.revealed}
-              </span>
-            )
-          }
-
-          // Eraser not equipped — static block, no interaction
-          if (!eraserEquipped) {
-            return (
-              <span key={i} className={styles.blockedText} aria-hidden="true">
-                {seg.blocked}
               </span>
             )
           }
@@ -151,16 +151,7 @@ export default function RedactedText({
     return <Tag className={className}>{redacted}</Tag>
   }
 
-  // If eraser equipped or all blocks revealed, show full revealed text
-  if (eraserEquipped && revealed) {
-    return (
-      <Tag className={className}>
-        <span className={styles.revealedText}>{revealed}</span>
-      </Tag>
-    )
-  }
-
-  // Render with styled blocks (no per-block reveal in fallback mode)
+  // Render with styled blocks (no interaction in fallback mode)
   const parts = redacted.match(/█+|[^█]+/g) || [redacted]
   return (
     <Tag className={className}>
